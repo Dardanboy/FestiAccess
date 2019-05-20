@@ -23,7 +23,7 @@ export class DataProvider {
     init() {
         this.storage.ready().then(() => {
             this.user = new User('Dardan', 'Iljazi', false, 'cmFuZG9tX2hhc2g=', new Role('invited'));
-            
+
         });
     }
 
