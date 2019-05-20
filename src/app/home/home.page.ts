@@ -7,4 +7,7 @@ import { Component } from '@angular/core';
 })
 export class HomePage {
 
+  public gotoocontact(){
+    // this.router.navigateByUrl('/contact');
+  }
 }
