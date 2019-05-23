@@ -28,9 +28,9 @@ export class DataProvider {
 
     store() {
         this.storage.set('user', this.user).then((data) => {
-            return resolve(data);
+             resolve(data);
         }).catch((reason) => {
-            return reject(reason);
+             reject(reason);
         });
     }
 

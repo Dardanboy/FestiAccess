@@ -9,3 +9,68 @@
 @import '~@ionic/angular/css/text-alignment.css';
 @import '~@ionic/angular/css/text-transformation.css';
 @import '~@ionic/angular/css/flex-utils.css';
+
+.flex {
+  display: flex !important;
+  &.flex-row {
+    flex-direction: row !important;
+  }
+  &.flex-column {
+    flex-direction: column !important;
+  }
+  &.flex-wrap{
+    flex-wrap: wrap !important;
+  }
+  &.flex-wrap-no{
+    flex-wrap: nowrap !important;
+  }
+  &.flex-wrap-reverse{
+    flex-wrap: wrap-reverse !important;
+  }
+  &.flex-justify-start{
+    justify-content: start !important;
+  }
+  &.flex-justify-end{
+    justify-content: end !important;
+  }
+  &.flex-justify-center{
+    justify-content: center !important;
+  }
+  &.flex-justify-between{
+    justify-content: space-between !important;
+  }
+  &.flex-justify-between{
+    justify-content: space-around !important;
+  }
+  &.flex-justify-evenly{
+    justify-content: space-evenly !important;
+  }
+  &.flex-align-start{
+    align-items: flex-start !important;
+  }
+  &.flex-align-end{
+    align-items: flex-end !important;
+  }
+  &.flex-align-center{
+    align-items: center !important;
+  }
+  &.flex-align-stretch{
+    align-items: stretch !important;
+  }
+  &.flex-align-baseline{
+    align-items: baseline !important;
+  }
+}
+
+.full-height{
+  height: 100vh;
+}
+
+@mixin w-x {
+  @for $i from 1 through 20 {
+    .w-#{$i*5} { width: #{$i*5} !important }
+  }
+}
+
+@include w-x;
+
