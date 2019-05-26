@@ -8,36 +8,32 @@ export class DataProvider {
 
     constructor(storage: Storage) {
         this.storage = storage;
-        // this.storage.ready().then(() => {
-        //     this.storage.get('flowers').then((data) => {
-        //         this.flowers.push(data);
-        //     }).catch(() => {
-        //         this.flowers.push(null);
-        //     });
-        // });
+        this.storage.ready().then(() => {
+            this.clear().then(() => {
+                this.init();
+                this.store().then( () => {
+                    console.log('Storage has been set !');
+                }).catch(() => {
+                    console.log('Didn\'t work');
+                });
+            });
+        });
+    }
 
-        this.init();
-        this.store();
+    makeARequest(){
+
     }
 
     init() {
-        this.storage.ready().then(() => {
-            this.user = new User('Dardan', 'Iljazi', false, 'cmFuZG9tX2hhc2g=', new Role('invited'));
-        });
+        this.user = (new User('Dardan', 'Iljazi', false, 'cmFuZG9tX2hhc2g=', new Role('invited'), []));
     }
 
     store() {
-        this.storage.set('user', this.user).then((data) => {
-             resolve(data);
-        }).catch((reason) => {
-             reject(reason);
-        });
+        return this.storage.set('users', this.user);
     }
 
     clear() {
-        this.storage.clear().then(() =>{
-            console.log('Storage cleared');
-        });
+        return this.storage.clear();
     }
 
     get(toGet) {

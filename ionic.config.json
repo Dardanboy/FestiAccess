@@ -1,5 +1,7 @@
 {
   "name": "FestiAccess",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
