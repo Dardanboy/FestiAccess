@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FingerprintAIO } from '@ionic-native/fingerprint-aio/ngx';
+// import { FingerprintAIO } from '@ionic-native/fingerprint-aio/ngx';
 
 @Component({
   selector: 'app-connection',
@@ -8,14 +8,14 @@ import { FingerprintAIO } from '@ionic-native/fingerprint-aio/ngx';
 })
 export class ConnectionPage implements OnInit {
 
-  constructor(private faio: FingerprintAIO) {
+  constructor() {
 
-      faio.isAvailable().then( (result) => {
-          alert("Fingerprint available");
-
-      }).catch((onmessage) => {
-          alert(onmessage);
-      });
+      // faio.isAvailable().then( (result) => {
+      //     alert("Fingerprint available");
+      //
+      // }).catch((onmessage) => {
+      //     alert(onmessage);
+      // });
   }
 
   ngOnInit() {
