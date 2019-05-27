@@ -72,5 +72,17 @@
   }
 }
 
-@include w-x;
+@mixin mt-x {
+    @for $i from 1 through 10 {
+        .mt-#{$i} { margin-top: #{$i}vh !important; }
+    }
+}
 
+@include w-x;
+@include mt-x;
+
+
+.fingerprint{
+    height: 25vh;
+    width: 25vw;
+}

@@ -9,13 +9,12 @@ import {Navigation} from "./implements/navigation";
   selector: 'app-root',
   templateUrl: 'app.component.html'
 })
-export class AppComponent extends Navigation{
+export class AppComponent{
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar
   ) {
-    super();
     this.initializeApp();
   }
 
