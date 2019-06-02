@@ -10,8 +10,8 @@ export enum FestiAccessPageEnum {
 export abstract class FestiAccessPage implements Navigation {
     protected API_URL = 'http://localhost/';
     protected API_PATH: string;
-    private dataProvider: DataProvider;
-    private router: Router;
+    protected dataProvider: DataProvider;
+    protected router: Router;
 
     protected constructor(API_PATH: string, injector: Injector) {
         this.dataProvider = injector.get(DataProvider);

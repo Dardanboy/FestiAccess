@@ -4,6 +4,11 @@ import {Role} from '../app/models/Role';
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from "@angular/core";
 
+export enum DataProviderEnum {
+    Get,
+    Post
+}
+
 @Injectable()
 export class DataProvider {
     private user: User;
@@ -24,7 +29,7 @@ export class DataProvider {
     /*
      * Send a request to the API and wait for the response.
      */
-    sendAndWaitResponse(url, path, method: string, data: string) {
+    sendAndWaitResponse(url, path, method: DataProviderEnum, data: string) {
 
     }
 
