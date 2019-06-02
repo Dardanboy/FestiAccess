@@ -1,21 +1,28 @@
 import { Component, OnInit } from '@angular/core';
 import {DataProvider } from '../../providers/data';
 import { Storage } from '@ionic/storage';
+import { Navigation } from '../implements/navigation';
 
 @Component({
     selector: 'app-main',
     templateUrl: './main.page.html',
     styleUrls: ['./main.page.scss'],
 })
-export class MainPage implements OnInit {
+export class MainPage implements OnInit, Navigation {
     private role: string;
-    public dataProvider: DataProvider;
+    public data: DataProvider;
 
-    constructor(private storage: Storage) {
-        this.dataProvider = new DataProvider(storage);
+    constructor(private storage: Storage, dataProvider: DataProvider) {
+        this.data = dataProvider;
     }
 
     ngOnInit() {
     }
+
+    goTo(link: string): void {
+
+    }
+
+
 }
 

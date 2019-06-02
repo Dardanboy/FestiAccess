@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { Storage } from '@ionic/storage';
 import {DataProvider} from '../../providers/data';
-import {Router} from '@angular/router';
-import { Navigation } from '../implements/navigation'
+import { Router} from '@angular/router';
+import { Navigation } from '../implements/navigation';
 
 @Component({
     selector: 'app-home',
@@ -10,15 +10,17 @@ import { Navigation } from '../implements/navigation'
     styleUrls: ['home.page.scss'],
 })
 
-export class HomePage extends Navigation {
-    private dataProvider: DataProvider;
+export class HomePage implements OnInit, Navigation {
+    private data: DataProvider;
 
-    constructor(private storage: Storage, router: Router) {
-        super(router);
-        this.dataProvider = new DataProvider(storage);
+    constructor(private storage: Storage, router: Router, dataProvider: DataProvider) {
+        this.data = dataProvider;
     }
 
+    ngOnInit() {
 
+    }
+
+    goTo(link: string): void {
+    }
 }
-
-
