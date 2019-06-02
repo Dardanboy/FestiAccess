@@ -1,8 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import { Storage } from '@ionic/storage';
-import {DataProvider} from '../../providers/data';
-import { Router} from '@angular/router';
-import { Navigation } from '../implements/navigation';
+import {Component, Injector, OnInit} from '@angular/core';
+import {FestiAccessPage, FestiAccessPageEnum} from '../extends/festi-access-page';
 
 @Component({
     selector: 'app-home',
@@ -10,17 +7,14 @@ import { Navigation } from '../implements/navigation';
     styleUrls: ['home.page.scss'],
 })
 
-export class HomePage implements OnInit, Navigation {
-    private data: DataProvider;
+export class HomePage extends FestiAccessPage implements OnInit {
 
-    constructor(private storage: Storage, router: Router, dataProvider: DataProvider) {
-        this.data = dataProvider;
+    constructor(injector: Injector) {
+        super(FestiAccessPageEnum.NoAPIUsage, injector);
     }
 
     ngOnInit() {
 
     }
 
-    goTo(link: string): void {
-    }
 }

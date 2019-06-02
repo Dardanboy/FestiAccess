@@ -13,16 +13,18 @@ import { IonicStorageModule} from '@ionic/storage';
 // import { TestComponent } from './test/test.component';
 
 import { HttpClientModule } from '@angular/common/http';
+import {DataProvider} from '../providers/data';
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(), HttpClientModule],
-  providers: [
-    StatusBar,
-    SplashScreen,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
-  ],
-  bootstrap: [AppComponent]
+    declarations: [AppComponent],
+    entryComponents: [],
+    imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(), HttpClientModule],
+    providers: [
+        StatusBar,
+        SplashScreen,
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+        DataProvider
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule {}

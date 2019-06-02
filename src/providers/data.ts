@@ -2,16 +2,13 @@ import { Storage} from '@ionic/storage';
 import { User } from '../app/models/User';
 import {Role} from '../app/models/Role';
 import {HttpClient} from '@angular/common/http';
+import {Injectable} from "@angular/core";
 
-
+@Injectable()
 export class DataProvider {
-    private storage: Storage;
     private user: User;
-    private http: HttpClient;
 
-    constructor(storage: Storage, http: HttpClient) {
-        this.storage = storage;
-        this.http = http;
+    constructor(private storage: Storage, private http: HttpClient) {
         this.storage.ready().then(() => {
             this.clear().then(() => {
                 this.init();

@@ -1,21 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import {Navigation} from '../implements/navigation';
+import {Component, Injector, OnInit} from '@angular/core';
+import {FestiAccessPage} from '../extends/festi-access-page';
 
 @Component({
-  selector: 'app-contact',
-  templateUrl: './contact.page.html',
-  styleUrls: ['./contact.page.scss'],
+    selector: 'app-contact',
+    templateUrl: './contact.page.html',
+    styleUrls: ['./contact.page.scss'],
 })
-export class ContactPage implements OnInit, Navigation {
+export class ContactPage extends FestiAccessPage implements OnInit {
 
-  constructor() { }
+    constructor(injector: Injector) {
+        super(null, injector)
+    }
 
-  ngOnInit() {
-  }
+    ngOnInit(): void {
 
-  goTo(link: string): void {
+    }
 
-  }
+    goTo(link: string): void {
+
+    }
 
 
 

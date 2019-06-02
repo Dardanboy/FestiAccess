@@ -8,7 +8,7 @@ import { Navigation } from '../implements/navigation';
     templateUrl: './main.page.html',
     styleUrls: ['./main.page.scss'],
 })
-export class MainPage implements OnInit, Navigation {
+export class MainPage implements Navigation {
     private role: string;
     public data: DataProvider;
 
@@ -16,13 +16,9 @@ export class MainPage implements OnInit, Navigation {
         this.data = dataProvider;
     }
 
-    ngOnInit() {
-    }
-
     goTo(link: string): void {
 
     }
-
 
 }
 
