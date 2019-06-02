@@ -13,7 +13,6 @@ export abstract class FestiAccessPage implements Navigation {
     private dataProvider: DataProvider;
     private router: Router;
 
-
     protected constructor(API_PATH: string, injector: Injector) {
         this.dataProvider = injector.get(DataProvider);
         this.router = injector.get(Router);

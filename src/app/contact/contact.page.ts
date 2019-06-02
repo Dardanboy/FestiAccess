@@ -1,5 +1,5 @@
 import {Component, Injector, OnInit} from '@angular/core';
-import {FestiAccessPage} from '../extends/festi-access-page';
+import {FestiAccessPage, FestiAccessPageEnum} from '../extends/festi-access-page';
 
 @Component({
     selector: 'app-contact',
@@ -9,7 +9,7 @@ import {FestiAccessPage} from '../extends/festi-access-page';
 export class ContactPage extends FestiAccessPage implements OnInit {
 
     constructor(injector: Injector) {
-        super(null, injector)
+        super(FestiAccessPageEnum.NoAPIUsage, injector)
     }
 
     ngOnInit(): void {

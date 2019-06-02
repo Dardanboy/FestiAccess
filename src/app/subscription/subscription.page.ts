@@ -1,8 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Injector, OnInit} from '@angular/core';
 import {FestiAccessPage} from '../extends/festi-access-page';
-import {DataProvider} from '../../providers/data';
-import { Navigation } from '../implements/navigation';
-import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-subscription',
@@ -10,10 +7,10 @@ import {Router} from "@angular/router";
     styleUrls: ['./subscription.page.scss'],
 })
 
-export class SubscriptionPage   implements OnInit, Navigation  {
+export class SubscriptionPage  extends FestiAccessPage implements OnInit  {
 
-    constructor(router: Router, dataProvider: DataProvider){
-        // super('/subscription', router, dataProvider);
+    constructor(injector: Injector){
+        super('/subscription', injector);
     }
 
     ngOnInit() {
