@@ -14,6 +14,8 @@ import { IonicStorageModule} from '@ionic/storage';
 
 import { HttpClientModule } from '@angular/common/http';
 import {DataProvider} from '../providers/data';
+import {FingerprintAIO, FingerprintOptions} from '@ionic-native/fingerprint-aio/ngx';
+import {FingerprintMock} from './mocks/fingerprint-mock';
 
 @NgModule({
     declarations: [AppComponent],
@@ -23,6 +25,7 @@ import {DataProvider} from '../providers/data';
         StatusBar,
         SplashScreen,
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+        { provide: FingerprintAIO, useClass: FingerprintMock},
         DataProvider
     ],
     bootstrap: [AppComponent]
