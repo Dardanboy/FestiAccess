@@ -18,7 +18,7 @@ export abstract class FestiAccessPage implements Navigation {
         this.dataProvider = injector.get(DataProvider);
         this.router = injector.get(Router);
 
-        if ((API_PATH !== null || API_PATH !== API.NoAPIUsage) && API_PATH[0] !== '/') {
+        if ((API_PATH !== null || API_PATH !== FestiAccessPageEnum.NoAPIUsage) && API_PATH[0] !== '/') {
             API_PATH.slice(0, 1);
         }
 
