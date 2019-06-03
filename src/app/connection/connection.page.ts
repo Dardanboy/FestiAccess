@@ -32,8 +32,6 @@ export class ConnectionPage extends FestiAccessPage implements OnInit, APIResour
             .then((result: any) => {
                 this.startLoading();
 
-                this.dataProvider.apiService.API_PATH = '/todos/1';
-                this.dataProvider.apiService.API_URL = 'https://jsonplaceholder.typicode.com/';
                 this.dataProvider.sendAndWaitResponse(DataProviderEnum.GET, this.apiResource(result))
                     .then((data) => {
                         console.log('connection data: ');
@@ -43,7 +41,6 @@ export class ConnectionPage extends FestiAccessPage implements OnInit, APIResour
                     })
                     .catch((error: any) => {
                         console.log(error);
-                        console.log('connection error: ' + error);
                         this.showMessage('Erreur: ' + error.message + '\nVeuillez ressayer ou contacter l\'administrateur', 7500);
                     });
 
