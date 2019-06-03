@@ -3,11 +3,7 @@ import {DataProvider} from '../../providers/data';
 import {Navigation} from '../implements/navigation';
 import {Injector} from '@angular/core';
 import {LoadingService} from '../../providers/loading';
-import {ApiService} from "../../providers/api";
-
-export enum FestiAccessPageEnum {
-    NoAPIUsage = 'NoAPIUsage'
-}
+import {ApiService} from '../../providers/api';
 
 export abstract class FestiAccessPage implements Navigation {
     protected apiService: ApiService;
@@ -15,12 +11,14 @@ export abstract class FestiAccessPage implements Navigation {
     protected router: Router;
     protected loadingService: LoadingService;
 
-    protected constructor(injector: Injector, API_PATH: string) {
+    protected constructor(injector: Injector, API_PATH = null) {
         this.dataProvider = injector.get(DataProvider);
         this.router = injector.get(Router);
         this.loadingService = injector.get(LoadingService);
-        this.apiService = injector.get(ApiService);
-        this.apiService.API_PATH = API_PATH;
+        if (API_PATH !== null) {
+            this.apiService = injector.get(ApiService);
+            this.apiService.API_PATH = API_PATH;
+        }
     }
 
     goTo(link): void {

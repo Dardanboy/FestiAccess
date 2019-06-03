@@ -13,7 +13,7 @@ import {APIResource} from '../implements/apiresource';
 export class ConnectionPage extends FestiAccessPage implements OnInit, APIResource {
 
     constructor(private fingerPrint: FingerprintAIO, injector: Injector) {
-        super('/connection', injector);
+        super(injector, '/connection');
     }
 
     ngOnInit() {
@@ -34,7 +34,7 @@ export class ConnectionPage extends FestiAccessPage implements OnInit, APIResour
 
                 console.log('result: ' + result);
                 console.log('finished');
-                this.dataProvider.sendAndWaitResponse(this.API_URL, this.API_PATH, DataProviderEnum.Post, this.apiResource(result));
+                this.dataProvider.sendAndWaitResponse(this.apiService.API_URL, this.apiService.API_PATH, DataProviderEnum.Post, this.apiResource(result));
                 this.stopLoading();
             })
             .catch((error: any) => console.log('error: ' + error));

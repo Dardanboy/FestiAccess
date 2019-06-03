@@ -10,7 +10,7 @@ import {FestiAccessPage} from '../extends/festi-access-page';
 export class SubscriptionPage  extends FestiAccessPage implements OnInit  {
 
     constructor(injector: Injector){
-        super('/subscription', injector);
+        super(injector, '/subscription');
     }
 
     ngOnInit() {
