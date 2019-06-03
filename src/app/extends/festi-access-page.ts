@@ -2,30 +2,25 @@ import {Router} from '@angular/router';
 import {DataProvider} from '../../providers/data';
 import {Navigation} from '../implements/navigation';
 import {Injector} from '@angular/core';
-import {LoadingController} from '@ionic/angular';
-import {LoadingService} from "../../providers/loading";
+import {LoadingService} from '../../providers/loading';
+import {ApiService} from "../../providers/api";
 
 export enum FestiAccessPageEnum {
     NoAPIUsage = 'NoAPIUsage'
 }
 
 export abstract class FestiAccessPage implements Navigation {
-    protected API_URL = 'http://localhost/';
-    protected API_PATH: string;
+    protected apiService: ApiService;
     protected dataProvider: DataProvider;
     protected router: Router;
     protected loadingService: LoadingService;
 
-    protected constructor(API_PATH: string, injector: Injector) {
+    protected constructor(injector: Injector, API_PATH: string) {
         this.dataProvider = injector.get(DataProvider);
         this.router = injector.get(Router);
         this.loadingService = injector.get(LoadingService);
-
-        if ((API_PATH !== null || API_PATH !== FestiAccessPageEnum.NoAPIUsage) && API_PATH[0] !== '/') {
-            API_PATH.slice(0, 1);
-        }
-
-        this.API_PATH = API_PATH;
+        this.apiService = injector.get(ApiService);
+        this.apiService.API_PATH = API_PATH;
     }
 
     goTo(link): void {

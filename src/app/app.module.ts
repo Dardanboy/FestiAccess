@@ -17,6 +17,7 @@ import {DataProvider} from '../providers/data';
 import {FingerprintAIO, FingerprintOptions} from '@ionic-native/fingerprint-aio/ngx';
 import {FingerprintMock} from './mocks/fingerprint-mock';
 import {LoadingService} from '../providers/loading';
+import {ApiService} from '../providers/api';
 
 @NgModule({
     declarations: [AppComponent],
@@ -28,7 +29,8 @@ import {LoadingService} from '../providers/loading';
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
         { provide: FingerprintAIO, useClass: FingerprintMock},
         DataProvider,
-        LoadingService
+        LoadingService,
+        ApiService
     ],
     bootstrap: [AppComponent]
 })
