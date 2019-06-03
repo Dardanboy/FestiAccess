@@ -18,6 +18,7 @@ import {FingerprintAIO, FingerprintOptions} from '@ionic-native/fingerprint-aio/
 import {FingerprintMock} from './mocks/fingerprint-mock';
 import {LoadingService} from '../providers/loading';
 import {ApiService} from '../providers/api';
+import {ToastService} from '../providers/toast';
 
 @NgModule({
     declarations: [AppComponent],
@@ -30,7 +31,8 @@ import {ApiService} from '../providers/api';
         { provide: FingerprintAIO, useClass: FingerprintMock},
         DataProvider,
         LoadingService,
-        ApiService
+        ApiService,
+        ToastService
     ],
     bootstrap: [AppComponent]
 })

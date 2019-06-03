@@ -10,7 +10,7 @@ export class ApiService {
     }
 
     set API_URL(value: string) {
-        this._API_URL = value;
+        this._API_URL = this.formatAsDomainName(value);
     }
 
     get API_PATH(): string {
@@ -18,9 +18,31 @@ export class ApiService {
     }
 
     set API_PATH(value: string) {
-        if (value !== null && value[0] !== '/') {
-            value.slice(0, 1);
+        this._API_PATH = this.formatAsPath(value);
+    }
+
+    formatAsDomainName(toFormat): string {
+        let format = toFormat;
+        if (format !== null && format[format.length - 1] !== '/') {
+            format += '/';
         }
-        this._API_PATH = value;
+
+        return format;
+    }
+
+    formatAsPath(toFormat): string {
+        let format = toFormat;
+        if (format !== null && format[0] === '/') {
+            format = format.slice(1);
+        }
+
+        return format;
+    }
+
+    fullUrl() {
+        this.API_URL  = this.formatAsDomainName(this.API_URL);
+        this.API_PATH = this.formatAsPath(this.API_PATH);
+
+        return this.API_URL + this.API_PATH;
     }
 }

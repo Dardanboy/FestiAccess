@@ -2,14 +2,14 @@ import { Storage} from '@ionic/storage';
 import { User } from '../app/models/User';
 import {Role} from '../app/models/Role';
 import {HttpClient} from '@angular/common/http';
-import {Injectable} from "@angular/core";
+import {Injectable} from '@angular/core';
 import {ApiService} from './api';
 
 export enum DataProviderEnum {
-    Get,
-    Post,
-    Put,
-    Delete
+    GET = 'get',
+    POST = 'post',
+    PUT = 'put',
+    DELETE = 'delete'
 }
 
 @Injectable()
@@ -20,14 +20,14 @@ export class DataProvider {
     constructor(private storage: Storage, private http: HttpClient, apiService: ApiService) {
         this._apiService = apiService;
         this.storage.ready().then(() => {
-            this.clear().then(() => {
-                this.init();
-                // this.store('users', ).then( () => {
-                //     console.log('Storage has been set !');
-                // }).catch(() => {
-                //     console.log('Didn\'t work');
-                // });
-            });
+            // this.clear().then(() => {
+            //     this.init();
+            //     // this.store('users', ).then( () => {
+            //     //     console.log('Storage has been set !');
+            //     // }).catch(() => {
+            //     //     console.log('Didn\'t work');
+            //     // });
+            // });
         });
     }
 
@@ -42,9 +42,17 @@ export class DataProvider {
     /*
      * Send a request to the API and wait for the response.
      */
-    sendAndWaitResponse(url, path, method: DataProviderEnum, data: string) {
+    sendAndWaitResponse(method: DataProviderEnum, data: string): Promise<any> {
+        let promise = null;
+        if (method === DataProviderEnum.POST || method === DataProviderEnum.PUT) {
+            promise = this.http[method](this.apiService.fullUrl(), data).toPromise();
+        } else {
+            promise = this.http[method](this.apiService.fullUrl()).toPromise();
+        }
 
+        return promise;
     }
+
 
     get(toGet) {
         return this.storage.get(toGet);

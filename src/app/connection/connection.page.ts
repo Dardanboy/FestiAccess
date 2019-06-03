@@ -28,20 +28,30 @@ export class ConnectionPage extends FestiAccessPage implements OnInit, APIResour
             disableBackup: true,
             localizedFallbackTitle: 'FestiAccess authentication',
             localizedReason: 'FestiAccess authentication'
-        }).then((result: any) => {
-            this.startLoading().then(() => console.log('startLoading'));
-            console.log('result: ' + result);
+        })
+            .then((result: any) => {
+                this.startLoading();
 
-            this.dataProvider.sendAndWaitResponse(
-                this.dataProvider.apiService.API_URL,
-                this.dataProvider.apiService.API_PATH,
-                DataProviderEnum.Post,
-                this.apiResource(result));
+                this.dataProvider.apiService.API_PATH = '/todos/1';
+                this.dataProvider.apiService.API_URL = 'https://jsonplaceholder.typicode.com/';
+                this.dataProvider.sendAndWaitResponse(DataProviderEnum.GET, this.apiResource(result))
+                    .then((data) => {
+                        console.log('connection data: ');
+                        console.log(data);
 
-            this.stopLoading().then(() => console.log('stopLoading'));
-        }).catch((error: any) => {
-            console.log('error: ' + error);
-        });
+                        this.stopLoading();
+                    })
+                    .catch((error: any) => {
+                        console.log(error);
+                        console.log('connection error: ' + error);
+                        this.showMessage('Erreur: ' + error.message + '\nVeuillez ressayer ou contacter l\'administrateur', 7500);
+                    });
+
+            })
+            .catch((error: any) => {
+                console.log('error: ' + error);
+                this.showMessage('Erreur: ' + error.message);
+            });
     }
 
     apiResource(hash: string): string {

@@ -3,16 +3,19 @@ import {DataProvider} from '../../providers/data';
 import {Navigation} from '../implements/navigation';
 import {Injector} from '@angular/core';
 import {LoadingService} from '../../providers/loading';
+import {ToastService} from '../../providers/toast';
 
 export abstract class FestiAccessPage implements Navigation {
     protected dataProvider: DataProvider;
     protected router: Router;
     protected loadingService: LoadingService;
+    protected toastService: ToastService;
 
     protected constructor(injector: Injector, API_PATH = null) {
         this.dataProvider = injector.get(DataProvider);
         this.router = injector.get(Router);
         this.loadingService = injector.get(LoadingService);
+        this.toastService = injector.get(ToastService);
 
         if (API_PATH !== null) {
             this.dataProvider.apiService.API_PATH = API_PATH;
@@ -27,12 +30,16 @@ export abstract class FestiAccessPage implements Navigation {
         });
     }
 
-    async startLoading() {
-        return this.loadingService.present();
+    startLoading() {
+        this.loadingService.present().then();
     }
 
-    async stopLoading() {
-        return this.loadingService.dismiss();
+    stopLoading() {
+        this.loadingService.dismiss().then();
+    }
+
+    showMessage(message: string, duration: number = 2000) {
+        this.toastService.presentToast(message, duration).then();
     }
 }
 

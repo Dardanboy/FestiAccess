@@ -5,7 +5,7 @@ import {LoadingController} from '@ionic/angular';
 export class LoadingService {
     private isLoading = false;
     private timeAnimationBegunMs = 0;
-    private minimumAnimationTimeMs = 300;
+    private minimumAnimationTimeMs = 400;
 
     constructor(public loadingController: LoadingController) {
     }
@@ -16,8 +16,8 @@ export class LoadingService {
             duration: 5000,
             message: 'Chargement..'
         }).then(a => {
+            this.timeAnimationBegunMs = new Date().getTime();
             a.present().then(() => {
-                this.timeAnimationBegunMs = new Date().getTime();
                 if (!this.isLoading) {
                     a.dismiss().then(() => console.log('abort presenting'));
                 }
@@ -26,12 +26,14 @@ export class LoadingService {
     }
 
     async dismiss() {
-        const timeAnimationShown = new Date().getTime() - this.timeAnimationBegunMs;
+        let timeAnimationShown = new Date().getTime() - this.timeAnimationBegunMs;
+
         if (timeAnimationShown < this.minimumAnimationTimeMs) {
-           await new Promise(resolve => setTimeout(resolve, this.minimumAnimationTimeMs - timeAnimationShown));
+            await new Promise(resolve => setTimeout(resolve, this.minimumAnimationTimeMs - timeAnimationShown));
         }
 
         this.isLoading = false;
+        this.timeAnimationBegunMs = 0;
         return await this.loadingController.dismiss().then(() => console.log('dismissed'));
     }
 }
