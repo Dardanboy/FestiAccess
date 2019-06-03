@@ -3,7 +3,6 @@ import {FestiAccessPage} from '../extends/festi-access-page';
 import {FingerprintAIO} from '@ionic-native/fingerprint-aio/ngx';
 import {DataProviderEnum} from '../../providers/data';
 import {APIResource} from '../implements/apiresource';
-import {json} from "@angular-devkit/core";
 
 @Component({
     selector: 'app-connection',
@@ -22,6 +21,8 @@ export class ConnectionPage extends FestiAccessPage implements OnInit, APIResour
     }
 
     connect() {
+        this.presentLoading();
+
         this.fingerPrint.show({
             clientId: 'FestiAccess',
             clientSecret: 'o7aoOMYUbyxaD23oFAnJ',
@@ -31,18 +32,18 @@ export class ConnectionPage extends FestiAccessPage implements OnInit, APIResour
         })
             .then((result: any) => {
                 console.log('result: ' + result);
+                console.log('finished');
+                this.stopLoading();
                 this.dataProvider.sendAndWaitResponse(this.API_URL, this.API_PATH, DataProviderEnum.Post, this.apiResource(result));
             })
             .catch((error: any) => console.log('error: ' + error));
-
-        //     sendAndWaitResponse(url, path, method: DataProviderEnum, data: string) {
-
     }
 
-    apiResource(hash: string): string{
+    apiResource(hash: string): string {
         return JSON.stringify({
-                fingerPrintHash : hash
+                fingerPrintHash: hash
             }
         );
     }
+
 }
