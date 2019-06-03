@@ -21,7 +21,6 @@ export class ConnectionPage extends FestiAccessPage implements OnInit, APIResour
     }
 
     connect() {
-        this.startLoading();
 
         this.fingerPrint.show({
             clientId: 'FestiAccess',
@@ -29,15 +28,20 @@ export class ConnectionPage extends FestiAccessPage implements OnInit, APIResour
             disableBackup: true,
             localizedFallbackTitle: 'FestiAccess authentication',
             localizedReason: 'FestiAccess authentication'
-        })
-            .then((result: any) => {
+        }).then((result: any) => {
+            this.startLoading().then(() => console.log('startLoading'));
+            console.log('result: ' + result);
 
-                console.log('result: ' + result);
-                console.log('finished');
-                this.dataProvider.sendAndWaitResponse(this.apiService.API_URL, this.apiService.API_PATH, DataProviderEnum.Post, this.apiResource(result));
-                this.stopLoading();
-            })
-            .catch((error: any) => console.log('error: ' + error));
+            this.dataProvider.sendAndWaitResponse(
+                this.dataProvider.apiService.API_URL,
+                this.dataProvider.apiService.API_PATH,
+                DataProviderEnum.Post,
+                this.apiResource(result));
+
+            this.stopLoading().then(() => console.log('stopLoading'));
+        }).catch((error: any) => {
+            console.log('error: ' + error);
+        });
     }
 
     apiResource(hash: string): string {

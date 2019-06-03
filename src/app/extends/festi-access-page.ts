@@ -3,10 +3,8 @@ import {DataProvider} from '../../providers/data';
 import {Navigation} from '../implements/navigation';
 import {Injector} from '@angular/core';
 import {LoadingService} from '../../providers/loading';
-import {ApiService} from '../../providers/api';
 
 export abstract class FestiAccessPage implements Navigation {
-    protected apiService: ApiService;
     protected dataProvider: DataProvider;
     protected router: Router;
     protected loadingService: LoadingService;
@@ -15,9 +13,9 @@ export abstract class FestiAccessPage implements Navigation {
         this.dataProvider = injector.get(DataProvider);
         this.router = injector.get(Router);
         this.loadingService = injector.get(LoadingService);
+
         if (API_PATH !== null) {
-            this.apiService = injector.get(ApiService);
-            this.apiService.API_PATH = API_PATH;
+            this.dataProvider.apiService.API_PATH = API_PATH;
         }
     }
 
@@ -30,11 +28,11 @@ export abstract class FestiAccessPage implements Navigation {
     }
 
     async startLoading() {
-        this.loadingService.present();
+        return this.loadingService.present();
     }
 
     async stopLoading() {
-        this.loadingService.dismiss();
+        return this.loadingService.dismiss();
     }
 }
 

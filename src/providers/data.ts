@@ -3,27 +3,40 @@ import { User } from '../app/models/User';
 import {Role} from '../app/models/Role';
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from "@angular/core";
+import {ApiService} from './api';
 
 export enum DataProviderEnum {
     Get,
-    Post
+    Post,
+    Put,
+    Delete
 }
 
 @Injectable()
 export class DataProvider {
+    private _apiService: ApiService;
     private user: User;
 
-    constructor(private storage: Storage, private http: HttpClient) {
+    constructor(private storage: Storage, private http: HttpClient, apiService: ApiService) {
+        this._apiService = apiService;
         this.storage.ready().then(() => {
             this.clear().then(() => {
                 this.init();
-                this.store().then( () => {
-                    console.log('Storage has been set !');
-                }).catch(() => {
-                    console.log('Didn\'t work');
-                });
+                // this.store('users', ).then( () => {
+                //     console.log('Storage has been set !');
+                // }).catch(() => {
+                //     console.log('Didn\'t work');
+                // });
             });
         });
+    }
+
+    get apiService(): ApiService {
+        return this._apiService;
+    }
+
+    set apiService(value: ApiService) {
+        this._apiService = value;
     }
 
     /*
@@ -41,8 +54,8 @@ export class DataProvider {
         this.user = (new User('Dardan', 'Iljazi', false, 'cmFuZG9tX2hhc2g=', new Role('invited'), []));
     }
 
-    private store() {
-        return this.storage.set('users', this.user);
+    private store(key, data) {
+        return this.storage.set(key, data);
     }
 
     private clear() {

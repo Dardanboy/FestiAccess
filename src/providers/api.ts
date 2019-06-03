@@ -1,6 +1,4 @@
 import {Injectable} from '@angular/core';
-import {FestiAccessPageEnum} from "../app/extends/festi-access-page";
-
 
 @Injectable()
 export class ApiService {
@@ -20,7 +18,7 @@ export class ApiService {
     }
 
     set API_PATH(value: string) {
-        if ((value !== null || value !== FestiAccessPageEnum.NoAPIUsage) && value[0] !== '/') {
+        if (value !== null && value[0] !== '/') {
             value.slice(0, 1);
         }
         this._API_PATH = value;
