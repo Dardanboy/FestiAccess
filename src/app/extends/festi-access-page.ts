@@ -36,7 +36,7 @@ export abstract class FestiAccessPage implements Navigation {
         });
     }
 
-    async presentLoading() {
+    async startLoading() {
         this.loadingService.present();
     }
 
