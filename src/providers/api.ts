@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 
 @Injectable()
 export class ApiService {
-    private _API_URL = 'http://localhost/';
+    private _API_URL = 'http://localhost:8000/';
     private _API_PATH: string;
 
     get API_URL(): string {

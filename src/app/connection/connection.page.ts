@@ -13,7 +13,7 @@ import {APIResource} from '../implements/apiresource';
 export class ConnectionPage extends FestiAccessPage implements OnInit, APIResource {
 
     constructor(private fingerPrint: FingerprintAIO, injector: Injector) {
-        super(injector, '/connection');
+        super(injector, '/api/dii/connection');
     }
 
     ngOnInit() {

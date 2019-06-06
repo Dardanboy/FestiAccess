@@ -16,7 +16,5 @@ export class MainPage extends FestiAccessPage implements OnInit {
     ngOnInit(): void {
 
     }
-
-
 }
 
