@@ -1,3 +1,6 @@
 [submodule "backend/API"]
 	path = backend/API
 	url = https://github.com/XCarrel/APIServer/
+[submodule "backend/APIServer"]
+	path = backend/APIServer
+	url = https://github.com/XCarrel/APIServer.git
