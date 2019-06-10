@@ -1,9 +1,10 @@
-import { Storage} from '@ionic/storage';
-import { User } from '../app/models/User';
-import {Role} from '../app/models/Role';
-import {HttpClient} from '@angular/common/http';
+import {Storage} from '@ionic/storage';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {ApiService} from './api';
+import 'reflect-metadata';
+import {plainToClass} from 'class-transformer';
+import {ClassType} from 'class-transformer/ClassTransformer';
 
 export enum DataProviderEnum {
     GET = 'get',
@@ -15,10 +16,11 @@ export enum DataProviderEnum {
 @Injectable()
 export class DataProvider {
     private _apiService: ApiService;
-    private user: User;
+    private requestsResultCache: Map<string, any>;
 
     constructor(private storage: Storage, private http: HttpClient, apiService: ApiService) {
         this._apiService = apiService;
+        this.requestsResultCache = new Map<string, any>();
         this.storage.ready().then(() => {
             // this.clear().then(() => {
             //     this.init();
@@ -35,31 +37,44 @@ export class DataProvider {
         return this._apiService;
     }
 
-    set apiService(value: ApiService) {
-        this._apiService = value;
-    }
-
     /*
      * Send a request to the API and wait for the response.
      */
-    sendAndWaitResponse(method: DataProviderEnum, data: string): Promise<any> {
+    sendAndWaitResponse(method: DataProviderEnum, data: any, storeIn: ClassType<any>): Promise<any> {
+
         let promise = null;
         if (method === DataProviderEnum.POST || method === DataProviderEnum.PUT) {
-            promise = this.http[method](this.apiService.fullUrl(), data).toPromise();
+            if (typeof data === 'object') {
+                data = this.serializeObject(data);
+                console.log('serialized data: ' + data);
+            }
+
+            promise = this.http[method](
+                this.apiService.fullUrl(),
+                data,
+                {observe: 'response', headers: new HttpHeaders({'Content-Type': 'application/x-www-form-urlencoded'})}
+            ).toPromise();
         } else {
-            promise = this.http[method](this.apiService.fullUrl()).toPromise();
+            promise = this.http[method](this.apiService.fullUrl(), {observe: 'response'}).toPromise();
         }
+
+        promise.then((response) => {
+            this.storeDataInMemoryCache(this.getDataFromApiResponse(this.getDataFromHttpClient(response)), storeIn);
+        });
 
         return promise;
     }
 
+    getFromCache(storedIn: ClassType<any>): any {
+        return this.requestsResultCache.get(storedIn.name);
+    }
 
-    get(toGet) {
+    private get(toGet) {
         return this.storage.get(toGet);
     }
 
     private init() {
-        this.user = (new User('Dardan', 'Iljazi', false, 'cmFuZG9tX2hhc2g=', new Role('invited'), []));
+        // this.user = (new User('Dardan', 'Iljazi', false, 'cmFuZG9tX2hhc2g=', new Role('invited'), []));
     }
 
     private store(key, data) {
@@ -68,5 +83,41 @@ export class DataProvider {
 
     private clear() {
         return this.storage.clear();
+    }
+
+    private serializeObject(object) {
+        const result = [];
+
+        for (const key in object) {
+            result.push(encodeURIComponent(key) + '=' + encodeURIComponent(object[key]));
+        }
+        return result.join('&');
+    }
+
+    private storeDataInMemoryCache(data, storeIn: ClassType<any>) {
+        // // If we already have something for the storeIn key, let's transform storeIn has an array of results !
+        // if (this.requestsResultCache.get(storeIn.name) !== undefined) {
+        //     let copy = [];
+        //     copy.push(data);
+        //     copy.push(this.requestsResultCache.get(storeIn.name));
+        //     data = copy;
+        // }
+        let objectToArray = [];
+        if (data instanceof Array) {
+            data.forEach((object) => {
+                objectToArray.push(plainToClass(storeIn, object));
+            });
+            data = objectToArray;
+        }
+
+        this.requestsResultCache.set(storeIn.name, plainToClass(storeIn, data));
+    }
+
+    private getDataFromHttpClient(httpClientResponse): Array<any> {
+        return httpClientResponse.body;
+    }
+
+    private getDataFromApiResponse(apiResponse): Array<any> {
+        return apiResponse.data;
     }
 }

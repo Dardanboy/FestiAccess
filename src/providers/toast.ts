@@ -7,10 +7,11 @@ export class ToastService {
     constructor(public toastController: ToastController) {
     }
 
-    async presentToast(message: string, duration: number) {
+    async presentToast(message: string, duration: number, buttons: object = []) {
         const toast = await this.toastController.create({
             message: message,
-            duration: duration
+            duration: duration,
+            buttons: buttons
         });
         return toast.present();
     }

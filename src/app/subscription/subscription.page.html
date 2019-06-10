@@ -1,28 +1,31 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Inscription</ion-title>
-      <ion-buttons slot="start">
-          <ion-back-button text=""></ion-back-button>
-      </ion-buttons>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title>Inscription</ion-title>
+        <ion-buttons slot="start">
+            <ion-back-button text=""></ion-back-button>
+        </ion-buttons>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <!-- Nom -->
-    <ion-item>
-        <ion-label>Nom</ion-label>
-        <ion-input></ion-input>
-    </ion-item>
+    <form [formGroup]="user" (ngSubmit)="subscribe()">
+        <!-- Nom -->
+        <ion-item>
+            <ion-label>Nom</ion-label>
+            <ion-input type="text" formControlName="name"></ion-input>
+        </ion-item>
 
-    <!-- Prénom -->
-    <ion-item>
-        <ion-label>Prénom</ion-label>
-        <ion-input></ion-input>
-    </ion-item>
+        <!-- Prénom -->
+        <ion-item>
+            <ion-label>Prénom</ion-label>
+            <ion-input type="text" formControlName="surname"></ion-input>
+        </ion-item>
 
-    <div class="flex flex-align-center flex-justify-center flex-column flex-align-center mt-5">
-        <ion-icon ios="ios-finger-print" md="md-finger-print" class="fingerprint flex-align-center"></ion-icon>
-        <p class="ion-text-center mt-2">Veuillez s'il vous plaît entrer votre empreinte</p>
-        <ion-button size="large" class="mt-5" (click)="subscribe()">M'inscrire</ion-button>
-    </div>
+
+        <div class="flex flex-align-center flex-justify-center flex-column flex-align-center mt-5">
+            <ion-icon ios="ios-finger-print" md="md-finger-print" class="fingerprint flex-align-center"></ion-icon>
+            <p class="ion-text-center mt-2">Veuillez s'il vous plaît entrer votre empreinte</p>
+            <ion-button type="submit" size="large"  [disabled]="!user.valid" class="mt-5">M'inscrire</ion-button>
+        </div>
+    </form>
 </ion-content>

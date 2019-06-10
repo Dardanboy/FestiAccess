@@ -10,6 +10,7 @@ export abstract class FestiAccessPage implements Navigation {
     protected router: Router;
     protected loadingService: LoadingService;
     protected toastService: ToastService;
+    private actualPage: string;
 
     protected constructor(injector: Injector, API_PATH = null) {
         this.dataProvider = injector.get(DataProvider);
@@ -25,9 +26,14 @@ export abstract class FestiAccessPage implements Navigation {
     goTo(link): void {
         this.router.navigate([link]).then(() => {
             console.log('Going to page: ' + link);
+            this.actualPage = link;
         }).catch(() => {
             console.log('goTo for ' + link + ' didn\'t work');
         });
+    }
+
+    backHome() {
+        this.goTo('home');
     }
 
     startLoading() {
@@ -38,8 +44,18 @@ export abstract class FestiAccessPage implements Navigation {
         this.loadingService.dismiss().then();
     }
 
-    showMessage(message: string, duration: number = 2000) {
-        this.toastService.presentToast(message, duration).then();
+    showMessage(message: string, duration: number = 2000, buttons: object = null) {
+        let buttonsObject = [];
+        if (buttons !== null) {
+            buttons.forEach((object) => {
+                buttonsObject.push({
+                    text: object.text,
+                    handler: object.action
+                });
+            });
+        }
+
+        this.toastService.presentToast(message, duration, buttonsObject).then();
     }
 }
 

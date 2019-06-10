@@ -60,6 +60,8 @@
   &.flex-align-baseline{
     align-items: baseline !important;
   }
+
+
 }
 
 .full-height{
@@ -72,6 +74,12 @@
   }
 }
 
+@mixin h-x {
+    @for $i from 1 through 20 {
+        .h-#{$i*5} { height: #{$i*5}vh !important }
+    }
+}
+
 @mixin mt-x {
     @for $i from 1 through 10 {
         .mt-#{$i} { margin-top: #{$i}vh !important; }
@@ -80,6 +88,7 @@
 
 @include w-x;
 @include mt-x;
+@include h-x;
 
 
 .fingerprint{
