@@ -1,11 +1,9 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {FestiAccessPage} from '../extends/festi-access-page';
-import {FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
-import {ClassType} from "class-transformer/ClassTransformer";
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DataProviderEnum} from '../../providers/data';
 import {APIResource} from '../implements/apiresource';
-import {User} from "../models/User";
-import {Router} from "@angular/router";
+import {User} from '../models/User';
 
 @Component({
     selector: 'app-subscription',
@@ -18,12 +16,9 @@ export class SubscriptionPage extends FestiAccessPage implements OnInit, APIReso
 
     constructor(injector: Injector, private formBuilder: FormBuilder) {
         super(injector, '/api/dii/subscription');
+        console.log(this.dataProvider);
 
-        this.user = this.formBuilder.group({
-            name: ['', Validators.required],
-            surname: ['', Validators.required],
-            fingerPrintHash: [this.generateTempFingerPrintHash('default', 'default'), Validators.required],
-        });
+        this.initializeUserFormBuilder();
     }
 
     ngOnInit() {
@@ -40,18 +35,21 @@ export class SubscriptionPage extends FestiAccessPage implements OnInit, APIReso
 
     subscribe() {
         this.user.value.fingerPrintHash = this.generateTempFingerPrintHash(this.user.value.name, this.user.value.surname);
-        console.log(this.user.value);
+
         this.dataProvider.sendAndWaitResponse(
+            this.apiService,
             DataProviderEnum.POST,
             this.apiResource(this.user.value.name, this.user.value.surname, this.user.value.fingerPrintHash),
-            User)
+            User
+        )
             .then((data) => {
                 console.log('data');
                 console.log(data);
                 if (data.status === 201 && data.body.message === 'CREATED_RESOURCE') {
-                    this.showMessage(
+                    this.resetInputValues();
+
+                    this.showAlert('Compte créé',
                         'Votre compte a bel et bien été créé. Veuillez vous rendre sur la page de connexion pour vous connecter',
-                        8000,
                         [{
                             text: 'Se connecter',
                             action: () => {
@@ -66,6 +64,19 @@ export class SubscriptionPage extends FestiAccessPage implements OnInit, APIReso
             });
     }
 
+    private resetInputValues() {
+        this.user.reset();
+        this.initializeUserFormBuilder();
+    }
+
+    private initializeUserFormBuilder() {
+        this.user = this.formBuilder.group({
+            name: ['', Validators.required],
+            surname: ['', Validators.required],
+            fingerPrintHash: [this.generateTempFingerPrintHash('default', 'default'), Validators.required],
+        });
+    }
+
     apiResource(name: string, surname: string, fingerPrintHash: string): object {
         return {
             name: name,
@@ -73,5 +84,4 @@ export class SubscriptionPage extends FestiAccessPage implements OnInit, APIReso
             fingerPrintHash: fingerPrintHash
         };
     }
-
 }

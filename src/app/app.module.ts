@@ -19,6 +19,7 @@ import {LoadingService} from '../providers/loading';
 import {ApiService} from '../providers/api';
 import {ToastService} from '../providers/toast';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {AlertControllerService} from "../providers/alertcontroller";
 
 @NgModule({
     declarations: [AppComponent],
@@ -35,8 +36,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
         {provide: FingerprintAIO, useClass: FingerprintMock},
         DataProvider,
         LoadingService,
-        ApiService,
-        ToastService
+        ToastService,
+        AlertControllerService
     ],
     bootstrap: [AppComponent]
 })

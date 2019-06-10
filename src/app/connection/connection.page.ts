@@ -3,7 +3,7 @@ import {FestiAccessPage} from '../extends/festi-access-page';
 import {FingerprintAIO} from '@ionic-native/fingerprint-aio/ngx';
 import {DataProviderEnum} from '../../providers/data';
 import {APIResource} from '../implements/apiresource';
-import {User} from "../models/User";
+import {User} from '../models/User';
 
 @Component({
     selector: 'app-connection',
@@ -33,11 +33,11 @@ export class ConnectionPage extends FestiAccessPage implements OnInit, APIResour
             .then((result: any) => {
                 this.startLoading();
 
-                this.dataProvider.sendAndWaitResponse(DataProviderEnum.POST, this.apiResource(result), User)
+                this.dataProvider.sendAndWaitResponse(this.apiService, DataProviderEnum.POST, this.apiResource(result), User)
                     .then((data) => {
                         console.log('connection data: ');
                         console.log(data);
-                        this.goTo('/main');
+                        this.goTo('main');
                     })
                     .catch((error: any) => {
                         if (error.status === 401 && error.error.message === 'AUTHENTIFICATION_FAIL'){

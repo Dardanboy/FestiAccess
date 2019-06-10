@@ -15,11 +15,9 @@ export enum DataProviderEnum {
 
 @Injectable()
 export class DataProvider {
-    private _apiService: ApiService;
     private requestsResultCache: Map<string, any>;
 
-    constructor(private storage: Storage, private http: HttpClient, apiService: ApiService) {
-        this._apiService = apiService;
+    constructor(private storage: Storage, private http: HttpClient) {
         this.requestsResultCache = new Map<string, any>();
         this.storage.ready().then(() => {
             // this.clear().then(() => {
@@ -40,7 +38,7 @@ export class DataProvider {
     /*
      * Send a request to the API and wait for the response.
      */
-    sendAndWaitResponse(method: DataProviderEnum, data: any, storeIn: ClassType<any>): Promise<any> {
+    sendAndWaitResponse(apiService: ApiService, method: DataProviderEnum, data: any, storeIn: ClassType<any>): Promise<any> {
 
         let promise = null;
         if (method === DataProviderEnum.POST || method === DataProviderEnum.PUT) {
@@ -50,12 +48,12 @@ export class DataProvider {
             }
 
             promise = this.http[method](
-                this.apiService.fullUrl(),
+                apiService.fullUrl(),
                 data,
                 {observe: 'response', headers: new HttpHeaders({'Content-Type': 'application/x-www-form-urlencoded'})}
             ).toPromise();
         } else {
-            promise = this.http[method](this.apiService.fullUrl(), {observe: 'response'}).toPromise();
+            promise = this.http[method](apiService.fullUrl(), {observe: 'response'}).toPromise();
         }
 
         promise.then((response) => {
