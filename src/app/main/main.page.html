@@ -3,6 +3,7 @@
 </ion-header>
 
 <ion-content class="flex flex-align-center flex-justify-center">
+
     <div *ngIf="user !== undefined && user !== null">
         <div *ngIf="user.role === 'security'">
             <div class="flex flex-align-center flex-justify-center flex-column flex-align-center mt-5">
@@ -14,32 +15,6 @@
         </div>
         <div *ngIf="user.role === 'user'" class="flex flex-align-center flex-justify-center h-100">
             <h2>Merci de vous être inscrit</h2>
-
-            {{ user.name }}
-            <button >Amis</button>
-            <ion-button size="full" (click)="goTo('settings')">Home</ion-button>
-            <ion-button size="full" (click)="goTo('friends')">Amis</ion-button>
-            <ion-button size="full" (click)="goTo('settings')">Paramètres</ion-button>
-
-            <!--        <ion-tabs>-->
-            <!--            <ion-tab-bar slot="bottom">-->
-
-            <!--                <ion-tab-button tab="main" (click)="goTo('main')">-->
-            <!--                    <ion-icon name="md-home"></ion-icon>-->
-            <!--                    <ion-label>Accueil</ion-label>-->
-            <!--                </ion-tab-button>-->
-
-            <!--                <ion-tab-button tab="friends" (click)="goTo('friends')">-->
-            <!--                    <ion-icon name="md-people"></ion-icon>-->
-            <!--                    <ion-label>Amis</ion-label>-->
-            <!--                </ion-tab-button>-->
-
-            <!--                <ion-tab-button tab="settings" (click)="goTo('settings')">-->
-            <!--                    <ion-icon name="md-settings"></ion-icon>-->
-            <!--                    <ion-label>Paramètres</ion-label>-->
-            <!--                </ion-tab-button>-->
-            <!--            </ion-tab-bar>-->
-            <!--        </ion-tabs>-->
         </div>
     </div>
 </ion-content>

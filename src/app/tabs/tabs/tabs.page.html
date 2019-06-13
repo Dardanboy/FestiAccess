@@ -1,0 +1,18 @@
+<ion-tabs>
+    <ion-tab-bar slot="bottom" color="primary">
+        <ion-tab-button tab="main">
+            <ion-icon name="home"></ion-icon>
+            <ion-label>Accueil</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="friends" (click)="goTo('friends')">
+            <ion-icon name="md-people"></ion-icon>
+            <ion-label>Contacts</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="settings" (click)="goTo('settings')">
+            <ion-icon name="md-settings"></ion-icon>
+            <ion-label>Paramètres</ion-label>
+        </ion-tab-button>
+    </ion-tab-bar>
+</ion-tabs>

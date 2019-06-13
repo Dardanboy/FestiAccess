@@ -37,7 +37,7 @@ export class ConnectionPage extends FestiAccessPage implements OnInit, APIResour
                     .then((data) => {
                         console.log('connection data: ');
                         console.log(data);
-                        this.goTo('main');
+                        this.goTo('tabs');
                     })
                     .catch((error: any) => {
                         if (error.status === 401 && error.error.message === 'AUTHENTIFICATION_FAIL'){
