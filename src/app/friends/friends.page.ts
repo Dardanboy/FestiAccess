@@ -3,12 +3,11 @@ import {FestiAccessPage} from '../extends/festi-access-page';
 import {User} from '../models/User';
 
 @Component({
-    selector: 'app-main',
-    templateUrl: './main.page.html',
-    styleUrls: ['./main.page.scss'],
+    selector: 'app-friends',
+    templateUrl: './friends.page.html',
+    styleUrls: ['./friends.page.scss'],
 })
-
-export class MainPage extends FestiAccessPage implements OnInit {
+export class FriendsPage extends FestiAccessPage implements OnInit {
     private user: User;
 
     constructor(injector: Injector) {
@@ -16,8 +15,9 @@ export class MainPage extends FestiAccessPage implements OnInit {
 
     }
 
-    ngOnInit(): void {
-        this.user = new User();
-    }
-}
+    ngOnInit() {
 
+    }
+
+
+}

@@ -15,7 +15,7 @@ export class User {
                 ishere: boolean = false,
                 fingerPrintHash: string = 'nope',
                 role: string = 'user',
-                friends: User[] = null) {
+                friends: User[] = []) {
         this.id = id;
         this.name = name;
         this.surname = surname;

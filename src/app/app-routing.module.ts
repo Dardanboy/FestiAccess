@@ -8,6 +8,7 @@ const routes: Routes = [
   { path: 'connection', loadChildren: './connection/connection.module#ConnectionPageModule' },
   { path: 'main', loadChildren: './main/main.module#MainPageModule' },
   { path: 'subscription', loadChildren: './subscription/subscription.module#SubscriptionPageModule' },
+  { path: 'friends', loadChildren: './friends/friends.module#FriendsPageModule' },
 ];
 
 @NgModule({
