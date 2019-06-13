@@ -7,7 +7,6 @@ import {User} from '../models/User';
     templateUrl: './main.page.html',
     styleUrls: ['./main.page.scss'],
 })
-
 export class MainPage extends FestiAccessPage implements OnInit {
     private user: User;
 
@@ -17,7 +16,8 @@ export class MainPage extends FestiAccessPage implements OnInit {
     }
 
     ngOnInit(): void {
-        this.user = new User();
+        this.user = this.dataProvider.getFromCache(User)[0];
     }
+
 }
 

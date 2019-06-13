@@ -1,7 +1,7 @@
 import {Router} from '@angular/router';
 import {DataProvider} from '../../providers/data';
 import {Navigation} from '../implements/navigation';
-import {Injector} from '@angular/core';
+import {Injector, OnInit} from '@angular/core';
 import {LoadingService} from '../../providers/loading';
 import {ToastService} from '../../providers/toast';
 import {AlertControllerService} from '../../providers/alertcontroller';
@@ -17,7 +17,6 @@ export abstract class FestiAccessPage implements Navigation {
     protected alertController: AlertControllerService;
     protected apiService: ApiService;
     protected navController: NavController;
-    private actualPage: string;
 
     protected constructor(injector: Injector, API_PATH = null) {
         this.dataProvider = injector.get(DataProvider);
@@ -54,8 +53,8 @@ export abstract class FestiAccessPage implements Navigation {
             return false;
         }
 
-        this.user = userCache[0];
-        if (this.user === undefined || this.user === null) {
+        userCache = userCache[0];
+        if (userCache === undefined || userCache === null) {
             return false;
         }
 
@@ -63,10 +62,9 @@ export abstract class FestiAccessPage implements Navigation {
     }
 
     goTo(link): void {
-        this.router.navigate([link])
+        this.router.navigate(['/' + link])
             .then(() => {
                 console.log('Going to page: ' + link);
-                this.actualPage = link;
             })
             .catch(() => {
                 console.log('goTo for ' + link + ' didn\'t work');
@@ -113,6 +111,7 @@ export abstract class FestiAccessPage implements Navigation {
 
         this.alertController.presentAlert(title, message, buttonsObject).then();
     }
+
 }
 
 
