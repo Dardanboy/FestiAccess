@@ -1,17 +1,24 @@
 <ion-header>
     <ion-toolbar>
-        <ion-title>Connexion</ion-title>
+        <ion-title class="ion-text-center">Connexion</ion-title>
         <ion-buttons slot="start">
             <ion-back-button text=""></ion-back-button>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>
 
-<ion-content class="flex flex-align-center flex-justify-center">
-    <div class="flex flex-align-center flex-justify-center flex-column flex-align-center mt-5">
-        <ion-icon ios="ios-finger-print" md="md-finger-print" class="fingerprint flex-align-center"></ion-icon>
-        <p class="ion-text-center mt-2">Veuillez s'il vous plaît entrer votre empreinte</p>
-        <ion-button class="mt-5" (click)="connect()">Se connecter avec l'utilisateur Dardan (debug)</ion-button>
-
-    </div>
+<ion-content>
+    <ion-grid class="h-50 flex ion-justify-content-center ion-align-items-center">
+        <ion-row class="ion-align-items-center ion-justify-content-center">
+            <ion-col size="12" class="ion-text-center">
+                <ion-icon ios="ios-finger-print" md="md-finger-print" class="fingerprint ion-text-center"></ion-icon>
+            </ion-col>
+            <ion-col size="12">
+                <p class="ion-text-center mt-2">Veuillez s'il vous plaît entrer votre empreinte</p>
+            </ion-col>
+            <ion-col size="12" class="ion-text-center ion-justify-content-center">
+                <ion-button class="mt-5" (click)="connect()">Connect. avec Dardan (debug)</ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 </ion-content>
