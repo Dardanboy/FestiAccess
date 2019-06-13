@@ -32,7 +32,7 @@ export class DataProvider {
     }
 
     get apiService(): ApiService {
-        return this._apiService;
+        return this.apiService;
     }
 
     /*

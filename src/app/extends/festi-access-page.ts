@@ -53,7 +53,7 @@ export abstract class FestiAccessPage implements Navigation {
         this.loadingService.dismiss().then();
     }
 
-    showMessage(message: string, duration: number = 2000, buttons: object = null) {
+    showMessage(message: string, duration: number = 2000, buttons: Array<any> = null) {
         let buttonsObject = [];
         if (buttons !== null) {
             buttons.forEach((object) => {
@@ -67,7 +67,7 @@ export abstract class FestiAccessPage implements Navigation {
         this.toastService.presentToast(message, duration, buttonsObject).then();
     }
 
-    showAlert(title: string, message: string, buttons: object = null) {
+    showAlert(title: string, message: string, buttons: Array<any> = null) {
         console.log('showAlert');
         let buttonsObject = [];
         if (buttons !== null) {

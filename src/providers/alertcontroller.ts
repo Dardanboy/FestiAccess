@@ -8,7 +8,7 @@ export class AlertControllerService {
 
     }
 
-    async presentAlert(title: string, message: string, buttons: object = null) {
+    async presentAlert(title: string, message: string, buttons: Array<any> = null) {
 
         const alert = await this.alertCtrl.create({
             header: title,
