@@ -1,26 +1,31 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Amis</ion-title>
-    <ion-buttons slot="start">
-      <ion-back-button text=""></ion-back-button>
-    </ion-buttons>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title>Amis</ion-title>
+        <ion-buttons slot="start">
+            <ion-back-button text=""></ion-back-button>
+        </ion-buttons>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-grid justify-content-center align-items-center>
-    <ion-row justify-content-center align-items-center>
-      <ion-col size="12">
+    <ion-grid justify-content-center align-items-center>
+        <ion-row justify-content-center align-items-center>
+            <ion-col size="12">
+                <ion-button size="large" (click)="goTo('addfriend')">Ajouter un contact</ion-button>
+            </ion-col>
+            <ion-col size="12">
 
-      </ion-col>
-      <ion-col size="12">
-        <h2>Amis</h2>
-        <ion-list>
-          <ion-item *ngIf="user !== undefined">
-            {{ user.name }}
-          </ion-item>
-        </ion-list>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+                <h2>Amis</h2>
+                <ion-list *ngIf="user !== null && user !== undefined">
+                    <ion-item>
+                        <div *ngIf="user.friends.length">
+                            <ion-item *ngFor="let friend of user.friends">
+                                <ion-label>{{ friend.name + " " + friend.surname }}</ion-label>
+                            </ion-item>
+                        </div>
+                    </ion-item>
+                </ion-list>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 </ion-content>

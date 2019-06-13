@@ -5,6 +5,7 @@ import {ApiService} from './api';
 import 'reflect-metadata';
 import {plainToClass} from 'class-transformer';
 import {ClassType} from 'class-transformer/ClassTransformer';
+import {User} from '../app/models/User';
 
 export enum DataProviderEnum {
     GET = 'get',
@@ -63,8 +64,23 @@ export class DataProvider {
         return promise;
     }
 
-    getFromCache(storedIn: ClassType<any>): any {
-        return this.requestsResultCache.get(storedIn.name);
+    /**
+     *
+     * @param storedIn
+     * @param forceAloneResultReturnWithoutArray is used when the result of requestResultCache.get is only one object.
+     *                                           In this case only the object itself will be returned and not included in an array and thus the "[0]" of
+     *                                           getFromCache()[0] won't be needed
+     */
+    getFromCache(storedIn: ClassType<any>, forceAloneResultReturnWithoutArray: boolean = true): any {
+        if (!this.requestsResultCache.has(storedIn.name)) {
+            return null;
+        }
+
+        let res = this.requestsResultCache.get(storedIn.name);
+        if (forceAloneResultReturnWithoutArray && res.length === 1) {
+            res = res[0];
+        }
+        return (res !== null || res !== undefined) ? res : null;
     }
 
     private get(toGet) {
@@ -100,7 +116,7 @@ export class DataProvider {
         //     copy.push(this.requestsResultCache.get(storeIn.name));
         //     data = copy;
         // }
-        let objectToArray = [];
+        const objectToArray = [];
         if (data instanceof Array) {
             data.forEach((object) => {
                 objectToArray.push(plainToClass(storeIn, object));

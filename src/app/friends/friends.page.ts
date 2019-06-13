@@ -12,11 +12,12 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
 
     constructor(injector: Injector) {
         super(injector);
-        this.user = new User();
+        console.log('friends constructor');
+        console.log(this.dataProvider);
     }
 
     ngOnInit() {
-        this.user = this.dataProvider.getFromCache(User)[0];
+        this.user = this.dataProvider.getFromCache(User);
     }
 
 

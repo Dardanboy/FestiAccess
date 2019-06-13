@@ -44,16 +44,13 @@ export abstract class FestiAccessPage implements Navigation {
      */
     isUserAlreadyConnected() {
         let actualPage = this.router.url;
-        if (actualPage.includes('/home') || actualPage.includes('/connection')) {
+        if (actualPage === '/home' || actualPage === '/connection') {
             return true;
         }
 
+        console.log(this.dataProvider);
         let userCache = this.dataProvider.getFromCache(User);
-        if (userCache === undefined || userCache === null) {
-            return false;
-        }
 
-        userCache = userCache[0];
         if (userCache === undefined || userCache === null) {
             return false;
         }
