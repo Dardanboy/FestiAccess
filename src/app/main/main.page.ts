@@ -1,4 +1,4 @@
-import {Component, Injector, OnInit} from '@angular/core';
+import {AfterContentInit, Component, Injector, OnInit} from '@angular/core';
 import {FestiAccessPage} from '../extends/festi-access-page';
 import {User} from '../models/User';
 
@@ -12,13 +12,11 @@ export class MainPage extends FestiAccessPage implements OnInit {
 
     constructor(injector: Injector) {
         super(injector);
-
-
+        this.user = this.dataProvider.getFromCache(User);
     }
 
     ngOnInit(): void {
-        this.user = this.dataProvider.getFromCache(User);
-        console.log(this.user);
+
     }
 
 }

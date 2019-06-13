@@ -32,30 +32,7 @@ export abstract class FestiAccessPage implements Navigation {
             this.apiService.API_PATH = API_PATH;
         }
 
-        if (!this.isUserAlreadyConnected()) {
-            this.backHome();
-        }
-    }
 
-    /**
-     * It is used to know if the page just accessed can be shown
-     * For that, user must be connected and for that we check if there is some data about user in the cache (memory)
-     * We don't do the check on pages where the user is not connected yet like home and connection page
-     */
-    isUserAlreadyConnected() {
-        let actualPage = this.router.url;
-        if (actualPage === '/home' || actualPage === '/connection') {
-            return true;
-        }
-
-        console.log(this.dataProvider);
-        let userCache = this.dataProvider.getFromCache(User);
-
-        if (userCache === undefined || userCache === null) {
-            return false;
-        }
-
-        return true;
     }
 
     goTo(link): void {
@@ -95,7 +72,7 @@ export abstract class FestiAccessPage implements Navigation {
     }
 
     showAlert(title: string, message: string, buttons: Array<any> = null) {
-        console.log('showAlert');
+
         let buttonsObject = [];
         if (buttons !== null) {
             buttons.forEach((object) => {

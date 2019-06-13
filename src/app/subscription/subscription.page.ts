@@ -16,7 +16,6 @@ export class SubscriptionPage extends FestiAccessPage implements OnInit, APIReso
 
     constructor(injector: Injector, private formBuilder: FormBuilder) {
         super(injector, '/api/dii/subscription');
-        console.log(this.dataProvider);
 
         this.initializeUserFormBuilder();
     }

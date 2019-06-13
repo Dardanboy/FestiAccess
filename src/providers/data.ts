@@ -5,7 +5,6 @@ import {ApiService} from './api';
 import 'reflect-metadata';
 import {plainToClass} from 'class-transformer';
 import {ClassType} from 'class-transformer/ClassTransformer';
-import {User} from '../app/models/User';
 
 export enum DataProviderEnum {
     GET = 'get',
@@ -123,6 +122,7 @@ export class DataProvider {
             });
             data = objectToArray;
         }
+
 
         this.requestsResultCache.set(storeIn.name, plainToClass(storeIn, data));
     }
