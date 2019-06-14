@@ -1,4 +1,6 @@
 import {Component, Injector, OnInit} from '@angular/core';
+import {DatePipe} from '@angular/common';
+import { formatDate } from '@angular/common';
 import {FestiAccessPage} from '../extends/festi-access-page';
 import {User} from '../models/User';
 
@@ -9,6 +11,7 @@ import {User} from '../models/User';
 })
 export class FriendsPage extends FestiAccessPage implements OnInit {
     private user: User;
+    today: number = Date.now();
 
     constructor(injector: Injector) {
         super(injector);

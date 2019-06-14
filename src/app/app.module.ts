@@ -21,6 +21,7 @@ import {ToastService} from '../providers/toast';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlertControllerService} from "../providers/alertcontroller";
 import {AuthGuardService} from "./guards/auth-guard-service.guard";
+import {DatePipe} from "@angular/common";
 
 @NgModule({
     declarations: [AppComponent],
@@ -40,6 +41,7 @@ import {AuthGuardService} from "./guards/auth-guard-service.guard";
         ToastService,
         AlertControllerService,
         AuthGuardService,
+        DatePipe
     ],
     bootstrap: [AppComponent]
 })

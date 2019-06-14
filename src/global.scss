@@ -9,6 +9,7 @@
 @import '~@ionic/angular/css/text-alignment.css';
 @import '~@ionic/angular/css/text-transformation.css';
 @import '~@ionic/angular/css/flex-utils.css';
+@import 'theme/variables';
 
 .flex {
   display: flex !important;
@@ -70,7 +71,7 @@
 
 @mixin w-x {
   @for $i from 1 through 20 {
-    .w-#{$i*5} { width: #{$i*5} !important }
+    .w-#{$i*5} { width: #{$i*5}#{'%'} !important }
   }
 }
 
@@ -86,6 +87,18 @@
     }
 }
 
+.m-auto {
+    margin: auto !important;
+}
+
+.pos-fixed {
+    position: fixed !important;
+}
+
+.pos-absolute {
+    position: absolute !important;
+}
+
 @include w-x;
 @include mt-x;
 @include h-x;
@@ -95,3 +108,27 @@
     height: 25vh;
     width: 25vw;
 }
+
+.friends-picture {
+    width: 100%;
+    height: 100%;
+}
+
+.circle-friend {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 8px;
+}
+
+.bg-success {
+    background-color: var(--ion-color-success);
+}
+
+.bg-medium {
+    background-color: var(--ion-color-medium);
+}
+
+
+
+
