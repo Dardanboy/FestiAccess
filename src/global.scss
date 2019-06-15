@@ -129,6 +129,14 @@
     background-color: var(--ion-color-medium);
 }
 
+.btn-no-bg {
+    background-color: transparent !important;
+}
 
+.btn-no-shadow {
+    box-shadow: none !important;
+}
 
-
+.black-text {
+    color: black !important;
+}
