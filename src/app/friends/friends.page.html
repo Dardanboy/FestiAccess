@@ -1,11 +1,24 @@
-<ion-content>.
+<ion-header>
+    <ion-toolbar>
+        <ion-title class="ion-text-center">
+            Contacts
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.75" pullMin="60" pullMax="50">
+        <ion-refresher-content
+            pullingText="Glisser pour rafraîchir"
+            refreshingSpinner="circles"
+            refreshingText="Rechargement...">
+        </ion-refresher-content>
+    </ion-refresher>
     <ion-grid class="flex ion-justify-content-center ion-align-items-center">
         <ion-row class="ion-align-items-center ion-justify-content-center">
-            <ion-col size="12" class="flex ion-justify-content-center">
-                <ion-button size="large" (click)="goTo('addfriend')">Ajouter un contact</ion-button>
-            </ion-col>
+            <!--            <ion-col size="12" class="flex ion-justify-content-center">-->
+            <!--                <ion-button size="large" (click)="goTo('addfriend')">Ajouter un contact</ion-button>-->
+            <!--            </ion-col>-->
             <ion-col size="12">
-                <h2>Contacts</h2>
                 <ion-list *ngIf="user !== null && user !== undefined">
                     <!-- User has contacts -->
                     <ng-container *ngFor="let friend of user.friends">

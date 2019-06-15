@@ -19,7 +19,6 @@ import {AuthGuardService} from './guards/auth-guard-service.guard';
 import {DatePipe} from '@angular/common';
 
 
-
 @NgModule({
     declarations: [AppComponent],
     entryComponents: [],

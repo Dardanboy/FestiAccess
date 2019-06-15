@@ -19,6 +19,15 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
         this.classifyFriendsFromHereToNot();
     }
 
+    doRefresh(event) {
+        console.log('Begin async operation');
+
+        setTimeout(() => {
+            console.log('Async operation has ended');
+            event.target.complete();
+        }, 2000);
+    }
+
     classifyFriendsFromHereToNot() {
         let friends = this.user.friends;
         const result = friends.sort((a, b) => {
