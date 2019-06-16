@@ -1,0 +1,42 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button text=""></ion-back-button>
+        </ion-buttons>
+        <ng-container *ngIf="user !== undefined && user !== null">
+            <ion-title class="ion-text-center">{{ user.name + ' ' + user.surname }}</ion-title>
+        </ng-container>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-grid class="flex ion-justify-content-center ion-align-items-center">
+        <ion-row class="flex flex-column ion-align-items-center ion-justify-content-center">
+            <ion-avatar class="ion-text-center mb-4 align-self-center user-picture">
+                <ion-icon name="contact" class="user-picture align-self-center"></ion-icon>
+            </ion-avatar>
+            <ng-container *ngIf="user !== undefined && user !== null">
+                <h2>
+                    {{ user.name + ' ' + user.surname }}
+                </h2>
+                <h3>
+                    <span class="circle-user" [ngClass]="{'bg-success': user.ishere, 'bg-medium': !user.ishere }"></span>
+                    {{ (user.ishere) ? 'Présent au festival' : 'Non présent au festival' }}
+                </h3>
+                <p>
+                    <ng-container *ngIf="user.ishere_changed_at">
+                        {{ user.ishere ? 'Entré au' : 'Sorti du' }} festival
+                        à {{ this.datePipe.transform(user.ishere_changed_at, 'h:mm') }}
+                    </ng-container>
+                    <ng-container *ngIf="!user.ishere_changed_at">
+                        Pas encore entré au festival
+                    </ng-container>
+                </p>
+                <p>
+                    Inscrit depuis le {{ this.datePipe.transform(user.subscribed_since, 'dd.MM.yyyy') }}
+                </p>
+            </ng-container>
+
+        </ion-row>
+    </ion-grid>
+</ion-content>

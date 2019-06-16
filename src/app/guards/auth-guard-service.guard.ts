@@ -11,6 +11,7 @@ import {
 import { Observable } from 'rxjs';
 import {DataProvider} from '../../providers/data';
 import {User} from "../models/User";
+import {ConnectedUser} from "../models/ConnectedUser";
 
 @Injectable()
 export class AuthGuardService implements CanLoad {
@@ -43,7 +44,7 @@ export class AuthGuardService implements CanLoad {
             return true;
         }
 
-        let userCache = this.dataProvider.getFromCache(User);
+        let userCache = this.dataProvider.getFromCache(ConnectedUser);
 
         if (userCache === undefined || userCache === null) {
             return false;

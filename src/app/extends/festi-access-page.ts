@@ -7,7 +7,8 @@ import {ToastService} from '../../providers/toast';
 import {AlertControllerService} from '../../providers/alertcontroller';
 import {ApiService} from '../../providers/api';
 import {NavController} from '@ionic/angular';
-import {DatePipe} from '@angular/common';
+import {DatePipe, Location} from '@angular/common';
+import {User} from '../models/User';
 
 
 export abstract class FestiAccessPage implements Navigation {
@@ -19,6 +20,7 @@ export abstract class FestiAccessPage implements Navigation {
     protected apiService: ApiService;
     protected navController: NavController;
     protected datePipe: DatePipe;
+    protected location: Location;
 
     protected constructor(injector: Injector, API_PATH = null) {
         this.dataProvider = injector.get(DataProvider);
@@ -28,6 +30,7 @@ export abstract class FestiAccessPage implements Navigation {
         this.alertController = injector.get(AlertControllerService);
         this.navController = injector.get(NavController);
         this.datePipe = injector.get(DatePipe);
+        this.location = injector.get(Location);
 
         this.apiService = new ApiService();
 
@@ -36,8 +39,8 @@ export abstract class FestiAccessPage implements Navigation {
         }
     }
 
-    goTo(link, params: Array<any> | string = null): void {
-        this.router.navigate(['/' + link])
+    goTo(link, params: number = null): void {
+        this.router.navigate(['/' + link  + ((params !== null && params !== undefined) ? '/' + params.toString() : '')])
             .then(() => {
                 console.log('Going to page: ' + link);
             })
@@ -48,6 +51,10 @@ export abstract class FestiAccessPage implements Navigation {
 
     backHome() {
         this.goTo('home');
+    }
+
+    goBack() {
+        this.location.back();
     }
 
     startLoading() {
@@ -73,7 +80,6 @@ export abstract class FestiAccessPage implements Navigation {
     }
 
     showAlert(title: string, message: string, buttons: Array<any> = null) {
-
         let buttonsObject = [];
         if (buttons !== null) {
             buttons.forEach((object) => {

@@ -35,12 +35,7 @@ export class SubscriptionPage extends FestiAccessPage implements OnInit, APIReso
     subscribe() {
         this.user.value.fingerPrintHash = this.generateTempFingerPrintHash(this.user.value.name, this.user.value.surname);
 
-        this.dataProvider.sendAndWaitResponse(
-            this.apiService,
-            DataProviderEnum.POST,
-            this.apiResource(this.user.value.name, this.user.value.surname, this.user.value.fingerPrintHash),
-            User
-        )
+        this.dataProvider.httpPostRequest(this.apiService, this.apiResource(this.user.value.name, this.user.value.surname, this.user.value.fingerPrintHash), User)
             .then((data) => {
                 console.log('data');
                 console.log(data);

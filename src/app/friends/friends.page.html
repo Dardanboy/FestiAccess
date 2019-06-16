@@ -15,9 +15,9 @@
     </ion-refresher>
     <ion-grid class="flex ion-justify-content-center ion-align-items-center">
         <ion-row class="ion-align-items-center ion-justify-content-center">
-            <!--            <ion-col size="12" class="flex ion-justify-content-center">-->
-            <!--                <ion-button size="large" (click)="goTo('addfriend')">Ajouter un contact</ion-button>-->
-            <!--            </ion-col>-->
+            <ion-col size="12" class="flex ion-justify-content-center">
+                <ion-button size="large" (click)="goTo('addfriend')">Ajouter un contact</ion-button>
+            </ion-col>
             <ion-col size="12">
                 <ion-list *ngIf="user !== null && user !== undefined">
                     <!-- User has contacts -->
@@ -40,8 +40,13 @@
                                     {{ (friend.ishere) ? 'Présent au festival' : 'Non présent au festival' }}
                                 </h3>
                                 <p>
-                                    {{ friend.ishere ? 'Entré au' : 'Sorti du' }} festival
-                                    à {{ this.datePipe.transform(friend.ishere_changed_at, 'h:mm') }}
+                                    <ng-container *ngIf="friend.ishere_changed_at">
+                                        {{ friend.ishere ? 'Entré au' : 'Sorti du' }} festival
+                                        à {{ this.datePipe.transform(friend.ishere_changed_at, 'h:mm') }}
+                                    </ng-container>
+                                    <ng-container *ngIf="!friend.ishere_changed_at">
+                                        Pas encore entré au festival
+                                    </ng-container>
                                 </p>
                             </ion-label>
                             <!-- Action buttons -->

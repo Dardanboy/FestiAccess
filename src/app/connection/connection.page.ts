@@ -4,6 +4,7 @@ import {FingerprintAIO} from '@ionic-native/fingerprint-aio/ngx';
 import {DataProviderEnum} from '../../providers/data';
 import {APIResource} from '../implements/apiresource';
 import {User} from '../models/User';
+import {ConnectedUser} from "../models/ConnectedUser";
 
 @Component({
     selector: 'app-connection',
@@ -33,14 +34,14 @@ export class ConnectionPage extends FestiAccessPage implements OnInit, APIResour
             .then((result: any) => {
                 this.startLoading();
 
-                this.dataProvider.sendAndWaitResponse(this.apiService, DataProviderEnum.POST, this.apiResource(result), User)
+                this.dataProvider.httpPostRequest(this.apiService, this.apiResource(result), ConnectedUser)
                     .then((data) => {
-                        console.log('connection data: ');
-                        console.log(data);
+
                         this.goTo('tabs');
                     })
                     .catch((error: any) => {
-                        if (error.status === 401 && error.error.message === 'AUTHENTIFICATION_FAIL'){
+
+                        if (error.status === 401 && error.error.message === 'AUTHENTIFICATION_FAIL') {
                             this.showMessage(
                                 'Erreur: Impossible de reconnaître votre empreinte.\n' +
                                 'Êtes-vous inscrit ? Si oui, veuillez ressayer, si non veuillez vous inscrire depuis la page d\'accueil'
@@ -50,6 +51,7 @@ export class ConnectionPage extends FestiAccessPage implements OnInit, APIResour
                         }
                     })
                     .finally(() => {
+
                         this.stopLoading();
                     });
 
