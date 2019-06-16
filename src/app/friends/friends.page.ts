@@ -12,7 +12,7 @@ import {DataProviderEnum} from "../../providers/data";
     styleUrls: ['./friends.page.scss'],
 })
 export class FriendsPage extends FestiAccessPage implements OnInit {
-    private user: User;
+    user: User;
     today: number = Date.now();
 
     constructor(injector: Injector) {

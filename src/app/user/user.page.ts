@@ -12,7 +12,7 @@ import {ConnectedUser} from '../models/ConnectedUser';
     styleUrls: ['./user.page.scss'],
 })
 export class UserPage extends FestiAccessPage implements OnInit {
-    private user: User;
+    user: User;
 
     constructor(injector: Injector, private route: ActivatedRoute) {
         super(injector, );

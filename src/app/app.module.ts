@@ -17,6 +17,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlertControllerService} from '../providers/alertcontroller';
 import {AuthGuardService} from './guards/auth-guard-service.guard';
 import {DatePipe} from '@angular/common';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 
 @NgModule({
@@ -26,7 +28,7 @@ import {DatePipe} from '@angular/common';
         FormsModule,
         ReactiveFormsModule
     ],
-    imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(), HttpClientModule, FormsModule, ReactiveFormsModule],
+    imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(), HttpClientModule, FormsModule, ReactiveFormsModule, ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })],
     providers: [
         StatusBar,
         SplashScreen,
