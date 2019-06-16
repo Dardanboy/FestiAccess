@@ -1,14 +1,15 @@
 import {Router} from '@angular/router';
 import {DataProvider} from '../../providers/data';
 import {Navigation} from '../implements/navigation';
-import {Injector, OnInit} from '@angular/core';
+import {Injector} from '@angular/core';
 import {LoadingService} from '../../providers/loading';
 import {ToastService} from '../../providers/toast';
 import {AlertControllerService} from '../../providers/alertcontroller';
 import {ApiService} from '../../providers/api';
-import {User} from '../models/User';
 import {NavController} from '@ionic/angular';
-import {DatePipe} from "@angular/common";
+import {DatePipe, Location} from '@angular/common';
+import {User} from '../models/User';
+
 
 export abstract class FestiAccessPage implements Navigation {
     protected dataProvider: DataProvider;
@@ -19,6 +20,7 @@ export abstract class FestiAccessPage implements Navigation {
     protected apiService: ApiService;
     protected navController: NavController;
     protected datePipe: DatePipe;
+    protected location: Location;
 
     protected constructor(injector: Injector, API_PATH = null) {
         this.dataProvider = injector.get(DataProvider);
@@ -28,17 +30,17 @@ export abstract class FestiAccessPage implements Navigation {
         this.alertController = injector.get(AlertControllerService);
         this.navController = injector.get(NavController);
         this.datePipe = injector.get(DatePipe);
+        this.location = injector.get(Location);
+
         this.apiService = new ApiService();
 
         if (API_PATH !== null) {
             this.apiService.API_PATH = API_PATH;
         }
-
-
     }
 
-    goTo(link): void {
-        this.router.navigate(['/' + link])
+    goTo(link, params: number = null): void {
+        this.router.navigate(['/' + link  + ((params !== null && params !== undefined) ? '/' + params.toString() : '')])
             .then(() => {
                 console.log('Going to page: ' + link);
             })
@@ -49,6 +51,10 @@ export abstract class FestiAccessPage implements Navigation {
 
     backHome() {
         this.goTo('home');
+    }
+
+    goBack() {
+        this.location.back();
     }
 
     startLoading() {
@@ -74,7 +80,6 @@ export abstract class FestiAccessPage implements Navigation {
     }
 
     showAlert(title: string, message: string, buttons: Array<any> = null) {
-
         let buttonsObject = [];
         if (buttons !== null) {
             buttons.forEach((object) => {
@@ -87,7 +92,6 @@ export abstract class FestiAccessPage implements Navigation {
 
         this.alertController.presentAlert(title, message, buttonsObject).then();
     }
-
 }
 
 

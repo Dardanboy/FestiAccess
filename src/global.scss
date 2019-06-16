@@ -87,6 +87,12 @@
     }
 }
 
+@mixin mb-x {
+    @for $i from 1 through 10 {
+        .mb-#{$i} { margin-bottom: #{$i}vh !important; }
+    }
+}
+
 .m-auto {
     margin: auto !important;
 }
@@ -101,6 +107,7 @@
 
 @include w-x;
 @include mt-x;
+@include mb-x;
 @include h-x;
 
 
@@ -112,6 +119,12 @@
 .friends-picture {
     width: 100%;
     height: 100%;
+}
+
+.user-picture {
+    display: block;
+    height: 20vh;
+    width: 20vh;
 }
 
 .circle-friend {
@@ -129,6 +142,14 @@
     background-color: var(--ion-color-medium);
 }
 
+.btn-no-bg {
+    background-color: transparent !important;
+}
 
+.btn-no-shadow {
+    box-shadow: none !important;
+}
 
-
+.black-text {
+    color: black !important;
+}
