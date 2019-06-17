@@ -13,6 +13,11 @@ export enum DataProviderEnum {
     DELETE = 'delete',
 }
 
+export enum DataProviderStorageEnum {
+    DONT_STORE_IN_STORAGE = 'DONT_STORE_IN_STORAGE',
+    STORE_IN_STORAGE = 'STORE_IN_STORAGE',
+}
+
 @Injectable()
 export class DataProvider {
     private requestsResultCache: Map<string, any>;
@@ -28,35 +33,40 @@ export class DataProvider {
     /**
      * Called for a get request. If needed, the result is put into the memory cache by providing a ClassType
      * @param apiService
+     * @param storeInStorage
      * @param storeIn
      */
-    public httpGetRequest(apiService: ApiService, storeIn: ClassType<any> = null): Promise<any> {
-        return this.httpRequestAndWaitResponse(apiService, DataProviderEnum.GET, null, storeIn);
+    public httpGetRequest(apiService: ApiService, storeIn: ClassType<any> = null, storeInStorage: DataProviderStorageEnum = DataProviderStorageEnum.DONT_STORE_IN_STORAGE): Promise<any> {
+        return this.httpRequestAndWaitResponse(apiService, DataProviderEnum.GET, null, storeIn, storeInStorage);
     }
 
     /**
      * Called for a delete request. If needed, the result is put into the memory cache by providing a ClassType
      * @param apiService
+     * @param storeInStorage
      * @param storeIn
      */
-    public httpDeleteRequest(apiService: ApiService, storeIn: ClassType<any> = null): Promise<any> {
-        return this.httpRequestAndWaitResponse(apiService, DataProviderEnum.DELETE, null, storeIn);
+    // tslint:disable-next-line:no-shadowed-variable
+    public httpDeleteRequest(apiService: ApiService, storeIn: ClassType<any> = null, storeInStorage: DataProviderStorageEnum = DataProviderStorageEnum.DONT_STORE_IN_STORAGE): Promise<any> {
+        return this.httpRequestAndWaitResponse(apiService, DataProviderEnum.DELETE, null, storeIn, storeInStorage);
     }
 
     /**
      * Called for a post request. If needed, the result is put into the memory cache by providing a ClassType
      * @param apiService
      * @param data
+     * @param storeInStorage
      * @param storeIn
      */
-    public httpPostRequest(apiService: ApiService, data: any, storeIn: ClassType<any> = null): Promise<any> {
-        return this.httpRequestAndWaitResponse(apiService, DataProviderEnum.POST, data, storeIn);
+    // tslint:disable-next-line:no-shadowed-variable
+    public httpPostRequest(apiService: ApiService, data: any, storeIn: ClassType<any> = null, storeInStorage: DataProviderStorageEnum = DataProviderStorageEnum.DONT_STORE_IN_STORAGE): Promise<any> {
+        return this.httpRequestAndWaitResponse(apiService, DataProviderEnum.POST, data, storeIn, storeInStorage);
     }
 
     /*
      * Send a request to the API and wait for the response.
      */
-    private httpRequestAndWaitResponse(apiService: ApiService, method: DataProviderEnum, data: any, storeIn: ClassType<any>): Promise<any> {
+    private httpRequestAndWaitResponse(apiService: ApiService, method: DataProviderEnum, data: any, storeIn: ClassType<any>, storeInStorage: DataProviderStorageEnum): Promise<any> {
 
         let promise = null;
 
@@ -80,14 +90,30 @@ export class DataProvider {
         }
 
         promise.then((response) => {
+            /**
+             * Store in memory cache
+             */
             if (storeIn !== null) {
                 console.log('response:');
                 console.log(response);
                 console.log('getDataFromHttpResponse:');
                 console.log(this.getDataFromHttpResponse(response));
 
-                if (this.getDataFromHttpResponse(response) !== null && this.getDataFromApiResponse(this.getDataFromHttpResponse(response)).length > 0) {
+                if (this.getDataFromHttpResponse(response) !== null &&
+                    this.getDataFromApiResponse(this.getDataFromHttpResponse(response)).length > 0) {
                     this.storeDataInMemoryCache(this.getDataFromApiResponse(this.getDataFromHttpResponse(response)), storeIn);
+                } else {
+                    throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
+                }
+            }
+
+            /**
+             *  Store in storage
+             */
+            if (storeInStorage === DataProviderStorageEnum.STORE_IN_STORAGE) {
+                if (this.getDataFromHttpResponse(response) !== null &&
+                    this.getDataFromApiResponse(this.getDataFromHttpResponse(response)).length > 0) {
+                    this.storeDataInStorage(this.getDataFromApiResponse(this.getDataFromHttpResponse(response)), storeIn);
                 } else {
                     throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
                 }
@@ -167,6 +193,26 @@ export class DataProvider {
         console.log(plainToClass(storeIn, data));
         this.requestsResultCache.set(storeIn.name, plainToClass(storeIn, data));
 
+    }
+
+    private storeDataInStorage(data, storeIn: ClassType<any>) {
+        const objectToArray = [];
+        if (data instanceof Array) {
+            data.forEach((object) => {
+                objectToArray.push(plainToClass(storeIn, object));
+            });
+            data = objectToArray;
+        }
+
+        this.storage.ready().then(() => {
+            this.storage.set(storeIn.name, data).then(() => {
+                console.log('data stored in storage:');
+                this.storage.get(storeIn.name).then((res) => {
+                    console.log('res');
+                    console.log(res);
+                });
+            });
+        });
     }
 
     private getDataFromHttpResponse(httpClientResponse): Array<any> {

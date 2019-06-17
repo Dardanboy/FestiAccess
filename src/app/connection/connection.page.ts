@@ -1,10 +1,9 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {FestiAccessPage} from '../extends/festi-access-page';
 import {FingerprintAIO} from '@ionic-native/fingerprint-aio/ngx';
-import {DataProviderEnum} from '../../providers/data';
+import {DataProviderStorageEnum} from '../../providers/data';
 import {APIResource} from '../implements/apiresource';
-import {User} from '../models/User';
-import {ConnectedUser} from "../models/ConnectedUser";
+import {ConnectedUser} from '../models/ConnectedUser';
 
 @Component({
     selector: 'app-connection',
@@ -34,7 +33,7 @@ export class ConnectionPage extends FestiAccessPage implements OnInit, APIResour
             .then((result: any) => {
                 this.startLoading();
 
-                this.dataProvider.httpPostRequest(this.apiService, this.apiResource(result), ConnectedUser)
+                this.dataProvider.httpPostRequest(this.apiService, this.apiResource(result), ConnectedUser, DataProviderStorageEnum.STORE_IN_STORAGE)
                     .then((data) => {
 
                         this.goTo('tabs');

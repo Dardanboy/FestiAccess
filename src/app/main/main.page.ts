@@ -14,6 +14,7 @@ export class MainPage extends FestiAccessPage implements OnInit {
     constructor(injector: Injector) {
         super(injector);
         this.user = this.dataProvider.getFromCache(ConnectedUser);
+
     }
 
     ngOnInit(): void {
