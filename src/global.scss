@@ -82,7 +82,7 @@
 }
 
 @mixin mt-x {
-    @for $i from 1 through 10 {
+    @for $i from 1 through 100 {
         .mt-#{$i} { margin-top: #{$i}vh !important; }
     }
 }
