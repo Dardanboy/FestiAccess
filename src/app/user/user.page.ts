@@ -21,7 +21,7 @@ export class UserPage extends FestiAccessPage implements OnInit {
         this.apiService.API_PATH = '/api/dii/users/' + this.route.snapshot.paramMap.get('id');
         this.dataProvider.httpGetRequest(this.apiService, User)
             .then((data) => {
-                this.user = this.dataProvider.getFromCache(User);
+                this.user = this.dataProvider.getFromMemoryCache(User);
             })
             .catch((error: any) => {
                 this.showMessage('Erreur: ' + error.message + '\nVeuillez ressayer ou contacter l\'administrateur', 7500);

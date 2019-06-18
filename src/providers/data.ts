@@ -128,9 +128,9 @@ export class DataProvider {
      * @param storedIn
      * @param forceAloneResultReturnWithoutArray is used when the result of requestResultCache.get is only one object.
      *                                           In this case only the object itself will be returned and not included in an array and thus the "[0]" of
-     *                                           getFromCache()[0] won't be needed
+     *                                           getFromMemoryCache()[0] won't be needed
      */
-    getFromCache(storedIn: ClassType<any>, forceAloneResultReturnWithoutArray: boolean = true): any {
+    getFromMemoryCache(storedIn: ClassType<any>, forceAloneResultReturnWithoutArray: boolean = true): any {
         if (!this.requestsResultCache.has(storedIn.name)) {
             return null;
         }
@@ -143,6 +143,15 @@ export class DataProvider {
         }
 
         return (res !== null || res !== undefined) ? res : null;
+    }
+
+    /**
+     *
+     * @param storedIn
+     * @param forceAloneResultReturnWithoutArray
+     */
+    getFromStorageCache(storedIn: ClassType<any>, forceAloneResultReturnWithoutArray: boolean = true): Promise<any> {
+        return this.storage.get(storedIn.name);
     }
 
     private get(toGet) {
@@ -206,11 +215,7 @@ export class DataProvider {
 
         this.storage.ready().then(() => {
             this.storage.set(storeIn.name, data).then(() => {
-                console.log('data stored in storage:');
-                this.storage.get(storeIn.name).then((res) => {
-                    console.log('res');
-                    console.log(res);
-                });
+                console.log('data stored in storage for: ' + storeIn.name);
             });
         });
     }

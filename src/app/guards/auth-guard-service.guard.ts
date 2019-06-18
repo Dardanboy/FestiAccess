@@ -8,10 +8,10 @@ import {
     UrlSegment,
     UrlTree
 } from '@angular/router';
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 import {DataProvider} from '../../providers/data';
-import {User} from "../models/User";
-import {ConnectedUser} from "../models/ConnectedUser";
+import {User} from '../models/User';
+import {ConnectedUser} from '../models/ConnectedUser';
 
 @Injectable()
 export class AuthGuardService implements CanLoad {
@@ -44,9 +44,18 @@ export class AuthGuardService implements CanLoad {
             return true;
         }
 
-        let userCache = this.dataProvider.getFromCache(ConnectedUser);
+        let userMemoryCache = this.dataProvider.getFromMemoryCache(ConnectedUser);
+        let userStorageCache = null;
 
-        if (userCache === undefined || userCache === null) {
+        this.dataProvider.getFromStorageCache(ConnectedUser)
+            .then((data) => {
+
+            })
+            .catch((error) => {
+
+            });
+
+        if (userMemoryCache === undefined || userMemoryCache === null) {
             return false;
         }
 
