@@ -17,8 +17,14 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
 
     constructor(injector: Injector) {
         super(injector);
-        this.user = this.dataProvider.getFromMemoryCache(ConnectedUser);
-        this.classifyFriendsFromHereToNot();
+        this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser)
+            .then((data) => {
+                this.user = data;
+                this.classifyFriendsFromHereToNot();
+            })
+            .catch((error) => {
+                this.showMessage('Erreur: ' + error);
+            });
     }
 
     doRefresh(event) {

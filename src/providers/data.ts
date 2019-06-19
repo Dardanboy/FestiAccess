@@ -26,10 +26,6 @@ export class DataProvider {
         this.requestsResultCache = new Map<string, any>();
     }
 
-    get apiService(): ApiService {
-        return this.apiService;
-    }
-
     /**
      * Called for a get request. If needed, the result is put into the memory cache by providing a ClassType
      * @param apiService
@@ -132,13 +128,16 @@ export class DataProvider {
      */
     getFromMemoryCache(storedIn: ClassType<any>, forceAloneResultReturnWithoutArray: boolean = true): any {
         if (!this.requestsResultCache.has(storedIn.name)) {
+            console.log('return null !');
             return null;
         }
 
         console.log('entries:');
         console.log(this.requestsResultCache.entries());
         let res = this.requestsResultCache.get(storedIn.name);
+
         if (forceAloneResultReturnWithoutArray && res.length === 1) {
+            console.log('Going to return first');
             res = res[0];
         }
 
@@ -150,8 +149,44 @@ export class DataProvider {
      * @param storedIn
      * @param forceAloneResultReturnWithoutArray
      */
-    getFromStorageCache(storedIn: ClassType<any>, forceAloneResultReturnWithoutArray: boolean = true): Promise<any> {
-        return this.storage.get(storedIn.name);
+    async getFromStorageCache(storedIn: ClassType<any>, forceAloneResultReturnWithoutArray: boolean = true): Promise<any> {
+        let res = await this.storage.get(storedIn.name);
+        console.log('resultat getFromStorageCache:');
+        console.log(res);
+        if (res === null) {
+            return null;
+        }
+
+        if (forceAloneResultReturnWithoutArray && res.length === 1) {
+            console.log('Going to return first');
+            res = res[0];
+        }
+
+        return (res !== null || res !== undefined) ? res : null;
+    }
+
+    /**
+     * This will return data that are stored into cache or memory.
+     * The memory will have the prevalence on the storage.
+     * When only storage has data, the data from storage will be put into the memory cache
+     * @param storedIn
+     */
+    async getFromMemoryOrStorageCache(storedIn: ClassType<any>): Promise<any> {
+        let result = this.getFromMemoryCache(storedIn);
+        console.log('typeof result:');
+        console.log(typeof result);
+        if (result !== null) {
+            return plainToClass(storedIn, result);
+        }
+
+        result = await this.getFromStorageCache(storedIn);
+        if (result === null) {
+            return null;
+        }
+        // Let's put result into memory cache
+        this.storeDataInMemoryCache(result, storedIn);
+
+        return plainToClass(storedIn, result);
     }
 
     private get(toGet) {
