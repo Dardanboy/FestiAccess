@@ -5,6 +5,7 @@ import {ApiService} from './api';
 import 'reflect-metadata';
 import {plainToClass} from 'class-transformer';
 import {ClassType} from 'class-transformer/ClassTransformer';
+import {reject} from "q";
 
 export enum DataProviderEnum {
     GET = 'get',
@@ -180,8 +181,9 @@ export class DataProvider {
         }
 
         result = await this.getFromStorageCache(storedIn);
+
         if (result === null) {
-            return null;
+            return reject('Storage cache doesn\'t contain data for: ' + storedIn.name);
         }
         // Let's put result into memory cache
         this.storeDataInMemoryCache(result, storedIn);

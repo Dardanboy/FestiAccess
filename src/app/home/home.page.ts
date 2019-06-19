@@ -13,9 +13,7 @@ export class HomePage extends FestiAccessPage implements OnInit {
     constructor(injector: Injector) {
         super(injector);
         this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser).then((data) => {
-            if (data !== null) {
-                this.goTo('tabs');
-            }
+            this.goTo('tabs');
         });
     }
 
