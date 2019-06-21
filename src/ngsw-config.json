@@ -1,14 +1,14 @@
 {
     "index": "/index.html",
     "dataGroups": [{
-        "name": "posts",
+        "name": "api",
         "urls": [
-            "http://localhost:8000/api/dii/**"
+            "/**"
         ],
         "cacheConfig": {
             "maxSize": 100,
             "maxAge": "10m",
-            "timeout": "10s",
+            "timeout": "5s",
             "strategy": "freshness"
         }
     }],

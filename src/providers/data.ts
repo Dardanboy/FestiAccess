@@ -5,6 +5,7 @@ import {ApiService} from './api';
 import 'reflect-metadata';
 import {plainToClass} from 'class-transformer';
 import {ClassType} from 'class-transformer/ClassTransformer';
+import {SwUpdate} from "@angular/service-worker";
 
 export enum DataProviderEnum {
     GET = 'get',
@@ -22,8 +23,18 @@ export enum DataProviderStorageEnum {
 export class DataProvider {
     private requestsResultCache: Map<string, any>;
 
-    constructor(private storage: Storage, private http: HttpClient) {
+    constructor(private storage: Storage, private http: HttpClient, updates: SwUpdate) {
         this.requestsResultCache = new Map<string, any>();
+
+        updates.available.subscribe(event => {
+            console.log('current version is', event.current);
+            console.log('available version is', event.available);
+        });
+
+        updates.activated.subscribe(event => {
+            console.log('old version was', event.previous);
+            console.log('new version is', event.current);
+        });
     }
 
     /**
@@ -78,9 +89,6 @@ export class DataProvider {
             ).toPromise();
 
         } else { // Get and Delete requests
-            if (data !== null && (data.id !== null || data.id !== undefined)) {
-                apiService.API_PATH = apiService.API_PATH + '/' + data.id;
-            }
             // this.http[method] is the method called on http class. It can be this.http.get or this.http.delete here
             promise = this.http[method](apiService.fullUrl(), {observe: 'response'}).toPromise();
         }
