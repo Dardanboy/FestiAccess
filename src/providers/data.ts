@@ -5,7 +5,6 @@ import {ApiService} from './api';
 import 'reflect-metadata';
 import {plainToClass} from 'class-transformer';
 import {ClassType} from 'class-transformer/ClassTransformer';
-import {SwUpdate} from "@angular/service-worker";
 
 export enum DataProviderEnum {
     GET = 'get',
@@ -23,18 +22,8 @@ export enum DataProviderStorageEnum {
 export class DataProvider {
     private requestsResultCache: Map<string, any>;
 
-    constructor(private storage: Storage, private http: HttpClient, updates: SwUpdate) {
+    constructor(private storage: Storage, private http: HttpClient) {
         this.requestsResultCache = new Map<string, any>();
-
-        updates.available.subscribe(event => {
-            console.log('current version is', event.current);
-            console.log('available version is', event.available);
-        });
-
-        updates.activated.subscribe(event => {
-            console.log('old version was', event.previous);
-            console.log('new version is', event.current);
-        });
     }
 
     /**
