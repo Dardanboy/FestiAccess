@@ -178,7 +178,7 @@ export class DataProvider {
         console.log(typeof result);
 
         if (result !== null) {
-            return plainToClass(storedIn, result);
+            return Promise.resolve(plainToClass(storedIn, result));
         }
 
         result = await this.getFromStorageCache(storedIn);
@@ -186,13 +186,12 @@ export class DataProvider {
         console.log('data result getFromStorageCache: ' + result);
         if (result === null) {
             console.log('result === null getFromStorageCache');
-            return null;
+            return Promise.resolve(null);
         }
         // Let's put result into memory cache
         // this.storeDataInMemoryCache(result, storedIn);
 
-        return plainToClass(storedIn, result);
-
+        return Promise.resolve(plainToClass(storedIn, result));
     }
 
     private get(toGet) {
