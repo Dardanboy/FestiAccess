@@ -3,5 +3,15 @@
 }
 ion-content { background-color: transparent !important; }
 
+.ion-fab {
+    position: relative;
+    top: -20px;
+    z-index: 999;
+
+    ion-fab-button {
+        width: 40px;
+        height: 40px;
+    }
+}
 
 

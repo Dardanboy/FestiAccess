@@ -8,10 +8,9 @@ import {
     UrlSegment,
     UrlTree
 } from '@angular/router';
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 import {DataProvider} from '../../providers/data';
-import {User} from "../models/User";
-import {ConnectedUser} from "../models/ConnectedUser";
+import {ConnectedUser} from '../models/ConnectedUser';
 
 @Injectable()
 export class AuthGuardService implements CanLoad {
@@ -24,13 +23,9 @@ export class AuthGuardService implements CanLoad {
     }
 
     canLoad(route: Route, segments: UrlSegment[]): Observable<boolean> | Promise<boolean> | boolean {
+        console.log('canLoad before');
 
-        if (!this.isUserAlreadyConnected()) {
-            this.router.navigateByUrl('/');
-            return false;
-        }
-
-        return true;
+        return this.isUserAlreadyConnected();
     }
 
     /**
@@ -38,19 +33,23 @@ export class AuthGuardService implements CanLoad {
      * For that, user must be connected and for that we check if there is some data about user in the cache (memory)
      * We don't do the check on pages where the user is not connected yet like home and connection page
      */
-    isUserAlreadyConnected() {
+    async isUserAlreadyConnected() {
         let actualPage = this.router.url;
         if (actualPage === '/home' || actualPage === '/connection') {
             return true;
         }
+        console.log('before wait result');
+        let result = await this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser);
+        console.log('after wait result');
+        console.log('resultguard:');
+        console.log(result);
 
-        let userCache = this.dataProvider.getFromCache(ConnectedUser);
 
-        if (userCache === undefined || userCache === null) {
-            return false;
+        if (result === null) {
+            console.log('navigate to home');
+            this.router.navigateByUrl('/home');
         }
 
-        return true;
+        return result !== null;
     }
-
 }

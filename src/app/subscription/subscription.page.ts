@@ -12,7 +12,7 @@ import {User} from '../models/User';
 })
 
 export class SubscriptionPage extends FestiAccessPage implements OnInit, APIResource {
-    private user: FormGroup;
+    user: FormGroup;
 
     constructor(injector: Injector, private formBuilder: FormBuilder) {
         super(injector, '/api/dii/subscription');

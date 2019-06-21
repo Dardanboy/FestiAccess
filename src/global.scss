@@ -82,13 +82,13 @@
 }
 
 @mixin mt-x {
-    @for $i from 1 through 10 {
+    @for $i from 1 through 100 {
         .mt-#{$i} { margin-top: #{$i}vh !important; }
     }
 }
 
 @mixin mb-x {
-    @for $i from 1 through 10 {
+    @for $i from 1 through 100 {
         .mb-#{$i} { margin-bottom: #{$i}vh !important; }
     }
 }

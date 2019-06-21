@@ -12,13 +12,19 @@ import {DataProviderEnum} from "../../providers/data";
     styleUrls: ['./friends.page.scss'],
 })
 export class FriendsPage extends FestiAccessPage implements OnInit {
-    private user: User;
+    user: User;
     today: number = Date.now();
 
     constructor(injector: Injector) {
         super(injector);
-        this.user = this.dataProvider.getFromCache(ConnectedUser);
-        this.classifyFriendsFromHereToNot();
+        this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser)
+            .then((data) => {
+                this.user = data;
+                this.classifyFriendsFromHereToNot();
+            })
+            .catch((error) => {
+                this.showMessage('Erreur: ' + error);
+            });
     }
 
     doRefresh(event) {
@@ -60,7 +66,7 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
     }
 
     private sendRequestToDeleteFriendship(friendId: number) {
-        this.apiService.API_PATH = '/api/dii/users/' + this.dataProvider.getFromCache(ConnectedUser).id + '/friends/' + friendId;
+        this.apiService.API_PATH = '/api/dii/users/' + this.dataProvider.getFromMemoryCache(ConnectedUser).id + '/friends/' + friendId;
 
         this.dataProvider.httpDeleteRequest(this.apiService)
             .then((data) => {
@@ -77,14 +83,14 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
     }
 
     reloadUserWithFriends() {
-        this.apiService.API_PATH = '/api/dii/users/' + this.dataProvider.getFromCache(ConnectedUser).id;
+        this.apiService.API_PATH = '/api/dii/users/' + this.dataProvider.getFromMemoryCache(ConnectedUser).id;
         this.startLoading();
 
         this.dataProvider.httpGetRequest(this.apiService, ConnectedUser)
             .then((data) => {
                 console.log('ConnectedUser2: ');
                 console.log(ConnectedUser);
-                this.user = this.dataProvider.getFromCache(ConnectedUser);
+                this.user = this.dataProvider.getFromMemoryCache(ConnectedUser);
                 this.classifyFriendsFromHereToNot();
             })
             .catch((error: any) => {

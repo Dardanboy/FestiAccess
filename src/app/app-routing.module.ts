@@ -12,6 +12,7 @@ const routes: Routes = [
     { path: 'add-friend', loadChildren: './add-friend/add-friend.module#AddFriendPageModule', canLoad: [AuthGuardService]},
     { path: 'user/:id', loadChildren: './user/user.module#UserPageModule', canLoad: [AuthGuardService] },
     { path: '', loadChildren: './tabs/tabs/tabs.module#TabsPageModule', canLoad: [AuthGuardService]},
+  { path: 'settings', loadChildren: './settings/settings.module#SettingsPageModule' },
 
 ];
 

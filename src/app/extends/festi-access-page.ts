@@ -8,7 +8,6 @@ import {AlertControllerService} from '../../providers/alertcontroller';
 import {ApiService} from '../../providers/api';
 import {NavController} from '@ionic/angular';
 import {DatePipe, Location} from '@angular/common';
-import {User} from '../models/User';
 
 
 export abstract class FestiAccessPage implements Navigation {
@@ -40,7 +39,7 @@ export abstract class FestiAccessPage implements Navigation {
     }
 
     goTo(link, params: number = null): void {
-        this.router.navigate(['/' + link  + ((params !== null && params !== undefined) ? '/' + params.toString() : '')])
+        this.router.navigate(['/' + link + ((params !== null && params !== undefined) ? '/' + params.toString() : '')])
             .then(() => {
                 console.log('Going to page: ' + link);
             })

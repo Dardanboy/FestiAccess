@@ -19,7 +19,9 @@
     "@angular/http": "^7.2.15",
     "@angular/platform-browser": "^7.2.15",
     "@angular/platform-browser-dynamic": "^7.2.15",
+    "@angular/pwa": "^0.12.4",
     "@angular/router": "^7.2.15",
+    "@angular/service-worker": "^7.2.15",
     "@ionic-native/camera": "^5.7.0",
     "@ionic-native/core": "^5.7.0",
     "@ionic-native/fingerprint-aio": "^5.7.0",
@@ -34,6 +36,7 @@
     "core-js": "^2.6.9",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.2",
+    "serve": "^11.0.1",
     "tslib": "^1.9.0",
     "zone.js": "~0.8.29"
   },

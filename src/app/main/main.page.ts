@@ -9,11 +9,20 @@ import {ConnectedUser} from "../models/ConnectedUser";
     styleUrls: ['./main.page.scss'],
 })
 export class MainPage extends FestiAccessPage implements OnInit {
-    private user: User;
+    user: User;
 
     constructor(injector: Injector) {
         super(injector);
-        this.user = this.dataProvider.getFromCache(ConnectedUser);
+        this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser)
+            .then((data) => {
+                console.log('main data:');
+                console.log(data);
+                this.user = data;
+                console.log(this.user);
+            })
+            .catch((error) => {
+                this.showMessage('Erreur: ' + error);
+            });
     }
 
     ngOnInit(): void {
