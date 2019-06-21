@@ -15,6 +15,8 @@ export class MainPage extends FestiAccessPage implements OnInit {
         super(injector);
         this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser)
             .then((data) => {
+                console.log('main data:');
+                console.log(data);
                 this.user = data;
                 console.log(this.user);
             })

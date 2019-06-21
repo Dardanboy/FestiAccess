@@ -38,11 +38,16 @@ export class AuthGuardService implements CanLoad {
         if (actualPage === '/home' || actualPage === '/connection') {
             return true;
         }
-
+        console.log('before wait result');
         let result = await this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser);
+        console.log('after wait result');
+        console.log('resultguard:');
+        console.log(result);
+
 
         if (result === null) {
-            this.router.navigateByUrl('/');
+            console.log('navigate to home');
+            this.router.navigateByUrl('/home');
         }
 
         return result !== null;

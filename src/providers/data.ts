@@ -5,7 +5,6 @@ import {ApiService} from './api';
 import 'reflect-metadata';
 import {plainToClass} from 'class-transformer';
 import {ClassType} from 'class-transformer/ClassTransformer';
-import {reject} from "q";
 
 export enum DataProviderEnum {
     GET = 'get',
@@ -155,6 +154,7 @@ export class DataProvider {
         console.log('resultat getFromStorageCache:');
         console.log(res);
         if (res === null) {
+            console.log('res === null');
             return null;
         }
 
@@ -176,19 +176,23 @@ export class DataProvider {
         let result = this.getFromMemoryCache(storedIn);
         console.log('typeof result:');
         console.log(typeof result);
+
         if (result !== null) {
             return plainToClass(storedIn, result);
         }
 
         result = await this.getFromStorageCache(storedIn);
 
+        console.log('data result getFromStorageCache: ' + result);
         if (result === null) {
-            return reject('Storage cache doesn\'t contain data for: ' + storedIn.name);
+            console.log('result === null getFromStorageCache');
+            return null;
         }
         // Let's put result into memory cache
-        this.storeDataInMemoryCache(result, storedIn);
+        // this.storeDataInMemoryCache(result, storedIn);
 
         return plainToClass(storedIn, result);
+
     }
 
     private get(toGet) {

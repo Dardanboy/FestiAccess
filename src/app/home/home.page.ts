@@ -12,9 +12,16 @@ export class HomePage extends FestiAccessPage implements OnInit {
 
     constructor(injector: Injector) {
         super(injector);
-        this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser).then((data) => {
-            this.goTo('tabs');
-        });
+        this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser)
+            .then((data) => {
+                console.log('data:');
+                console.log(data);
+                console.log('home going to tabs');
+                this.goTo('tabs');
+            })
+            .catch((error) => {
+                console.log('catch homepage');
+            });
     }
 
     ngOnInit() {
