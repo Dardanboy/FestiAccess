@@ -314,7 +314,7 @@ export class DataProvider {
         this.getFromMemoryOrStorageCache(HttpRequestCacheManager).then((data) => {
             console.log('data for httpRequestCacheManager:');
             if (data !== null) {
-                this.httpRequestCacheManager = plainToClass(HttpRequestCacheManager, data);
+                this.httpRequestCacheManager = plainToClass(HttpRequestCacheManager, this.serializeObject(data));
                 console.log('httpRequestCacheManager:');
                 console.log(this.httpRequestCacheManager);
             }

@@ -23,8 +23,8 @@
                                    [value]="settings.allSettings.apiLink"></ion-input>
                     </ion-item>
 
-                    <ion-item *ngIf="settings.allSettings.offlineMode !== null">
-                        <ion-button size="full" color="danger" class="w-100" (click)="disconnect()"><ion-icon ios="ios-exit" md="md-exit"> </ion-icon> Déconnexion</ion-button>
+                    <ion-item class="mt-2">
+                        <a class="w-100" (click)="disconnect()" style="vertical-align: middle;"><ion-icon ios="ios-exit" md="md-exit" style="vertical-align: middle"> </ion-icon> Déconnexion</a>
                     </ion-item>
 
                     <div class="mt-10">
