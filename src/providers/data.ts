@@ -19,10 +19,16 @@ export enum DataProviderStorageEnum {
     STORE_IN_STORAGE = 'STORE_IN_STORAGE',
 }
 
+export enum ConnectionStatusEnum {
+    Online,
+    Offline
+}
+
 @Injectable()
 export class DataProvider {
     private requestsResultCache: Map<string, any>;
     private httpRequestCacheManager: HttpRequestCacheManager;
+    private onlineOffline: boolean = navigator.onLine;
 
     constructor(private storage: Storage, private http: HttpClient) {
         this.requestsResultCache = new Map<string, any>();
