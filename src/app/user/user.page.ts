@@ -15,10 +15,12 @@ export class UserPage extends FestiAccessPage implements OnInit {
     user: User;
 
     constructor(injector: Injector, private route: ActivatedRoute) {
-        super(injector, );
+        super(injector);
 
         this.startLoading();
+
         this.apiService.API_PATH = '/api/dii/users/' + this.route.snapshot.paramMap.get('id');
+
         this.dataProvider.httpGetRequest(this.apiService, User)
             .then((data) => {
                 this.user = this.dataProvider.getFromMemoryCache(User);

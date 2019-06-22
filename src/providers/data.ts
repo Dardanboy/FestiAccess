@@ -5,6 +5,7 @@ import {ApiService} from './api';
 import 'reflect-metadata';
 import {plainToClass} from 'class-transformer';
 import {ClassType} from 'class-transformer/ClassTransformer';
+import {HttpRequestCacheManager} from '../app/models/HttpRequestCacheManager';
 
 export enum DataProviderEnum {
     GET = 'get',
@@ -21,9 +22,11 @@ export enum DataProviderStorageEnum {
 @Injectable()
 export class DataProvider {
     private requestsResultCache: Map<string, any>;
+    private httpRequestCacheManager: HttpRequestCacheManager;
 
     constructor(private storage: Storage, private http: HttpClient) {
         this.requestsResultCache = new Map<string, any>();
+        this.initializeHttpRequestCacheWithStorageData();
     }
 
     /**
@@ -42,7 +45,6 @@ export class DataProvider {
      * @param storeInStorage
      * @param storeIn
      */
-    // tslint:disable-next-line:no-shadowed-variable
     public httpDeleteRequest(apiService: ApiService, storeIn: ClassType<any> = null, storeInStorage: DataProviderStorageEnum = DataProviderStorageEnum.DONT_STORE_IN_STORAGE): Promise<any> {
         return this.httpRequestAndWaitResponse(apiService, DataProviderEnum.DELETE, null, storeIn, storeInStorage);
     }
@@ -54,7 +56,6 @@ export class DataProvider {
      * @param storeInStorage
      * @param storeIn
      */
-    // tslint:disable-next-line:no-shadowed-variable
     public httpPostRequest(apiService: ApiService, data: any, storeIn: ClassType<any> = null, storeInStorage: DataProviderStorageEnum = DataProviderStorageEnum.DONT_STORE_IN_STORAGE): Promise<any> {
         return this.httpRequestAndWaitResponse(apiService, DataProviderEnum.POST, data, storeIn, storeInStorage);
     }
@@ -63,7 +64,6 @@ export class DataProvider {
      * Send a request to the API and wait for the response.
      */
     private httpRequestAndWaitResponse(apiService: ApiService, method: DataProviderEnum, data: any, storeIn: ClassType<any>, storeInStorage: DataProviderStorageEnum): Promise<any> {
-
         let promise = null;
 
         if (method === DataProviderEnum.POST || method === DataProviderEnum.PUT) {
@@ -83,30 +83,36 @@ export class DataProvider {
         }
 
         promise.then((response) => {
-            /**
-             * Store in memory cache
-             */
+
             if (storeIn !== null) {
-                console.log('response:');
-                console.log(response);
-                console.log('getDataFromHttpResponse:');
-                console.log(this.getDataFromHttpResponse(response));
-
                 if (this.getDataFromHttpResponse(response) !== null &&
                     this.getDataFromApiResponse(this.getDataFromHttpResponse(response)).length > 0) {
+
+                    /**
+                     * Store in memory cache
+                     */
                     this.storeDataInMemoryCache(this.getDataFromApiResponse(this.getDataFromHttpResponse(response)), storeIn);
-                } else {
-                    throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
-                }
-            }
 
-            /**
-             *  Store in storage
-             */
-            if (storeInStorage === DataProviderStorageEnum.STORE_IN_STORAGE) {
-                if (this.getDataFromHttpResponse(response) !== null &&
-                    this.getDataFromApiResponse(this.getDataFromHttpResponse(response)).length > 0) {
+                    /**
+                     *  Store response in storage cache
+                     */
                     this.storeDataInStorage(this.getDataFromApiResponse(this.getDataFromHttpResponse(response)), storeIn);
+
+                    /**
+                     *  Add all requests in HttpRequestCache (by using HttpRequestCacher)
+                     *  Store this HttpRequestCache into the storage cache
+                     */
+                    this.httpRequestCacheManager.addHttpCache(apiService.fullUrl(), method, this.getDataFromHttpResponse(response));
+                    this.storeDataInStorage(this.httpRequestCacheManager, HttpRequestCacheManager);
+
+                    this.getFromMemoryOrStorageCache(HttpRequestCacheManager).then((data) => {
+                        let httpRequest = new HttpRequestCacheManager();
+                        httpRequest = data;
+                        console.log('yop:');
+                        console.log(httpRequest);
+                    });
+
+
                 } else {
                     throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
                 }
@@ -175,7 +181,7 @@ export class DataProvider {
         console.log(typeof result);
 
         if (result !== null) {
-            return Promise.resolve(plainToClass(storedIn, result));
+            return await Promise.resolve(plainToClass(storedIn, result));
         }
 
         result = await this.getFromStorageCache(storedIn);
@@ -183,12 +189,12 @@ export class DataProvider {
         console.log('data result getFromStorageCache: ' + result);
         if (result === null) {
             console.log('result === null getFromStorageCache');
-            return Promise.resolve(null);
+            return await Promise.resolve(null);
         }
         // Let's put result into memory cache
         // this.storeDataInMemoryCache(result, storedIn);
 
-        return Promise.resolve(plainToClass(storedIn, result));
+        return await Promise.resolve(plainToClass(storedIn, result));
     }
 
     private get(toGet) {
@@ -264,4 +270,17 @@ export class DataProvider {
     private getDataFromApiResponse(apiResponse): Array<any> {
         return apiResponse.data;
     }
+
+    private initializeHttpRequestCacheWithStorageData() {
+        this.httpRequestCacheManager = new HttpRequestCacheManager();
+        this.getFromMemoryOrStorageCache(HttpRequestCacheManager).then((data) => {
+            console.log('data for httpRequestCacheManager:');
+            if (data !== null) {
+                this.httpRequestCacheManager = plainToClass(HttpRequestCacheManager, data);
+                console.log('httpRequestCacheManager:');
+                console.log(this.httpRequestCacheManager);
+            }
+        });
+    }
+
 }
