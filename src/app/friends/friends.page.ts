@@ -16,6 +16,7 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
 
     constructor(injector: Injector) {
         super(injector);
+        this.user = null;
         this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser)
             .then((data) => {
                 this.user = data;

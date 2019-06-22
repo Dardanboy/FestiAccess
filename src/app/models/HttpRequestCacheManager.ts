@@ -9,6 +9,7 @@ export class HttpRequestCacheManager {
 
     addHttpCache(url: string, requestType: string, data: object) {
         // This is a bad idea to use O(n) loops but for now it's ok (time..)
+        // TODO: Replace the forEach with an associative array ( O(1) access )
         let contains = false;
         let positionContains = 0;
         this.allCache.forEach((value, index) => {
@@ -24,5 +25,18 @@ export class HttpRequestCacheManager {
             this.allCache[positionContains].data = data;
             this.allCache[positionContains].timestamp = Date.now();
         }
+    }
+
+    getHttpCache(url: string, requestType: string) {
+        // Bad idea to use O(n) loops but for now it's ok (time..)
+        // TODO: Replace the forEach with an associative array ( O(1) access )
+        let response = null;
+        this.allCache.forEach((value, index) => {
+            if (value.link === url && value.type === requestType) {
+                response = value;
+            }
+        });
+
+        return response;
     }
 }

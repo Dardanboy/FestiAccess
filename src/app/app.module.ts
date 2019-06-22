@@ -17,6 +17,9 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlertControllerService} from '../providers/alertcontroller';
 import {AuthGuardService} from './guards/auth-guard-service.guard';
 import {DatePipe} from '@angular/common';
+import {NetworkService} from '../providers/network';
+import { Network } from '@ionic-native/network/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 
 @NgModule({
     declarations: [AppComponent],
@@ -37,6 +40,9 @@ import {DatePipe} from '@angular/common';
         AlertControllerService,
         AuthGuardService,
         DatePipe,
+        NetworkService,
+        Network,
+        AppVersion
     ],
     bootstrap: [AppComponent]
 })

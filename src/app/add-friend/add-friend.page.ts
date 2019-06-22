@@ -14,7 +14,9 @@ export class AddFriendPage extends FestiAccessPage implements OnInit {
 
     constructor(injector: Injector) {
         super(injector);
-        this.user = this.dataProvider.getFromMemoryCache(ConnectedUser);
+        this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser).then((connectedUser) => {
+            this.user = connectedUser;
+        });
         this.instructionMessageShown = false;
     }
 

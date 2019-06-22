@@ -6,6 +6,7 @@ import 'reflect-metadata';
 import {plainToClass} from 'class-transformer';
 import {ClassType} from 'class-transformer/ClassTransformer';
 import {HttpRequestCacheManager} from '../app/models/HttpRequestCacheManager';
+import {NetworkService} from "./network";
 
 export enum DataProviderEnum {
     GET = 'get',
@@ -28,11 +29,18 @@ export enum ConnectionStatusEnum {
 export class DataProvider {
     private requestsResultCache: Map<string, any>;
     private httpRequestCacheManager: HttpRequestCacheManager;
-    private onlineOffline: boolean = navigator.onLine;
 
-    constructor(private storage: Storage, private http: HttpClient) {
+    constructor(private storage: Storage, private http: HttpClient, private networkService: NetworkService) {
         this.requestsResultCache = new Map<string, any>();
         this.initializeHttpRequestCacheWithStorageData();
+
+        this.networkService.network.onDisconnect().subscribe(() => {
+            console.log('disconnected');
+        });
+
+        this.networkService.network.onConnect().subscribe(() => {
+            console.log('connected');
+        });
     }
 
     /**
@@ -71,25 +79,45 @@ export class DataProvider {
      */
     private httpRequestAndWaitResponse(apiService: ApiService, method: DataProviderEnum, data: any, storeIn: ClassType<any>, storeInStorage: DataProviderStorageEnum): Promise<any> {
         let promise = null;
+        if (this.networkService.isConnected && this.networkService.network.type !== 'none') {
+            console.log('IS CONNECTED');
+            if (method === DataProviderEnum.POST || method === DataProviderEnum.PUT) {
+                if (typeof data === 'object') {
+                    data = this.serializeObject(data);
+                }
+                // this.http[method] is the method called on http class. It can be this.http.post or this.http.put here
+                promise = this.http[method](
+                    apiService.fullUrl(),
+                    data,
+                    {
+                        observe: 'response',
+                        headers: new HttpHeaders({'Content-Type': 'application/x-www-form-urlencoded'})
+                    }
+                ).toPromise();
 
-        if (method === DataProviderEnum.POST || method === DataProviderEnum.PUT) {
-            if (typeof data === 'object') {
-                data = this.serializeObject(data);
+            } else { // Get and Delete requests
+                // this.http[method] is the method called on http class. It can be this.http.get or this.http.delete here
+                promise = this.http[method](apiService.fullUrl(), {observe: 'response'}).toPromise();
             }
-            // this.http[method] is the method called on http class. It can be this.http.post or this.http.put here
-            promise = this.http[method](
-                apiService.fullUrl(),
-                data,
-                {observe: 'response', headers: new HttpHeaders({'Content-Type': 'application/x-www-form-urlencoded'})}
-            ).toPromise();
+        } else { // NO CONNECTION
+            console.log('IS NOT CONNECTED');
 
-        } else { // Get and Delete requests
-            // this.http[method] is the method called on http class. It can be this.http.get or this.http.delete here
-            promise = this.http[method](apiService.fullUrl(), {observe: 'response'}).toPromise();
+            /**
+             * No connection, no chocolate.
+             * Here we just get what's put in the local cache (in HttpRequestCacheManager)
+             */
+            console.log('what\' returned by getHttpResponseFromCache ?:');
+            console.log(this.getHttpResponseFromCache(apiService.fullUrl(), method));
+
+            promise = new Promise((resolve) => {
+                let httpData = this.getHttpResponseFromCache(apiService.fullUrl(), method);
+                resolve(httpData.data);
+            });
         }
 
         promise.then((response) => {
-
+            console.log('response: ' + response);
+            console.log(response);
             if (storeIn !== null) {
                 if (this.getDataFromHttpResponse(response) !== null &&
                     this.getDataFromApiResponse(this.getDataFromHttpResponse(response)).length > 0) {
@@ -108,8 +136,9 @@ export class DataProvider {
                      *  Add all requests in HttpRequestCache (by using HttpRequestCacher)
                      *  Store this HttpRequestCache into the storage cache
                      */
-                    this.httpRequestCacheManager.addHttpCache(apiService.fullUrl(), method, this.getDataFromHttpResponse(response));
-                    this.storeDataInStorage(this.httpRequestCacheManager, HttpRequestCacheManager);
+                    this.httpRequestCacheManager.addHttpCache(apiService.fullUrl(), method, response);
+                    this.storeDataInStorage(this.httpRequestCacheManager.allCache, HttpRequestCacheManager);
+
 
                 } else {
                     throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
@@ -127,7 +156,7 @@ export class DataProvider {
      *                                           In this case only the object itself will be returned and not included in an array and thus the "[0]" of
      *                                           getFromMemoryCache()[0] won't be needed
      */
-    getFromMemoryCache(storedIn: ClassType<any>, forceAloneResultReturnWithoutArray: boolean = true): any {
+    private getFromMemoryCache(storedIn: ClassType<any>, forceAloneResultReturnWithoutArray: boolean = true): any {
         if (!this.requestsResultCache.has(storedIn.name)) {
             console.log('return null !');
             return null;
@@ -150,7 +179,7 @@ export class DataProvider {
      * @param storedIn
      * @param forceAloneResultReturnWithoutArray
      */
-    async getFromStorageCache(storedIn: ClassType<any>, forceAloneResultReturnWithoutArray: boolean = true): Promise<any> {
+    private async getFromStorageCache(storedIn: ClassType<any>, forceAloneResultReturnWithoutArray: boolean = true): Promise<any> {
         let res = await this.storage.get(storedIn.name);
         console.log('resultat getFromStorageCache:');
         console.log(res);
@@ -221,13 +250,6 @@ export class DataProvider {
     }
 
     private storeDataInMemoryCache(data, storeIn: ClassType<any>) {
-        // // If we already have something for the storeIn key, let's transform storeIn has an array of results !
-        // if (this.requestsResultCache.get(storeIn.name) !== undefined) {
-        //     let copy = [];
-        //     copy.push(data);
-        //     copy.push(this.requestsResultCache.get(storeIn.name));
-        //     data = copy;
-        // }
         const objectToArray = [];
         if (data instanceof Array) {
             data.forEach((object) => {
@@ -279,6 +301,10 @@ export class DataProvider {
                 console.log(this.httpRequestCacheManager);
             }
         });
+    }
+
+    private getHttpResponseFromCache(url: string, requestType: string) {
+        return this.httpRequestCacheManager.getHttpCache(url, requestType);
     }
 
 }

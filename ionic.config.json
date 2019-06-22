@@ -1,7 +1,8 @@
 {
   "name": "FestiAccess",
   "integrations": {
-    "cordova": {}
+    "cordova": {},
+    "capacitor": {}
   },
   "type": "angular"
 }

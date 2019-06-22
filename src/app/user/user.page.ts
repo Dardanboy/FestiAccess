@@ -23,7 +23,11 @@ export class UserPage extends FestiAccessPage implements OnInit {
 
         this.dataProvider.httpGetRequest(this.apiService, User)
             .then((data) => {
-                this.user = this.dataProvider.getFromMemoryCache(User);
+                this.user = null;
+
+                this.dataProvider.getFromMemoryOrStorageCache(User).then((user) => {
+                    this.user = user;
+                });
             })
             .catch((error: any) => {
                 this.showMessage('Erreur: ' + error.message + '\nVeuillez ressayer ou contacter l\'administrateur', 7500);
