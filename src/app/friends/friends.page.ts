@@ -40,6 +40,8 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
         const result = friends.sort((a, b) => {
             if (!a.ishere && b.ishere) {
                 return 1;
+            } else {
+                return -1;
             }
         });
     }
@@ -99,8 +101,10 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
                 .then((data) => {
                     console.log('ConnectedUser2: ');
                     console.log(ConnectedUser);
-                    this.user = this.dataProvider.getFromMemoryCache(ConnectedUser);
-                    this.classifyFriendsFromHereToNot();
+                    this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser).then((connectedUser) => {
+                        this.user = connectedUser;
+                        this.classifyFriendsFromHereToNot();
+                    });
                 })
                 .catch((error: any) => {
                     this.showMessage('Erreur: ' + error.message + '\nVeuillez ressayer ou contacter l\'administrateur', 7500);

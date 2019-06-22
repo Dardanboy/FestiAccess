@@ -105,14 +105,6 @@ export class DataProvider {
                     this.httpRequestCacheManager.addHttpCache(apiService.fullUrl(), method, this.getDataFromHttpResponse(response));
                     this.storeDataInStorage(this.httpRequestCacheManager, HttpRequestCacheManager);
 
-                    this.getFromMemoryOrStorageCache(HttpRequestCacheManager).then((data) => {
-                        let httpRequest = new HttpRequestCacheManager();
-                        httpRequest = data;
-                        console.log('yop:');
-                        console.log(httpRequest);
-                    });
-
-
                 } else {
                     throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
                 }

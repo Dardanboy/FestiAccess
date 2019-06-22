@@ -17,8 +17,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlertControllerService} from '../providers/alertcontroller';
 import {AuthGuardService} from './guards/auth-guard-service.guard';
 import {DatePipe} from '@angular/common';
-import {HttpRequestCacher} from "../providers/http-request-cacher";
-
 
 @NgModule({
     declarations: [AppComponent],
@@ -39,7 +37,6 @@ import {HttpRequestCacher} from "../providers/http-request-cacher";
         AlertControllerService,
         AuthGuardService,
         DatePipe,
-        HttpRequestCacher
     ],
     bootstrap: [AppComponent]
 })
