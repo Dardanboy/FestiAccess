@@ -20,6 +20,7 @@ import {DatePipe} from '@angular/common';
 import {NetworkService} from '../providers/network';
 import { Network } from '@ionic-native/network/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import {SettingsService} from '../providers/settings';
 
 @NgModule({
     declarations: [AppComponent],
@@ -42,7 +43,8 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
         DatePipe,
         NetworkService,
         Network,
-        AppVersion
+        AppVersion,
+        SettingsService
     ],
     bootstrap: [AppComponent]
 })

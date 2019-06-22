@@ -8,7 +8,8 @@ import {AlertControllerService} from '../../providers/alertcontroller';
 import {ApiService} from '../../providers/api';
 import {NavController} from '@ionic/angular';
 import {DatePipe, Location} from '@angular/common';
-import {NetworkService} from "../../providers/network";
+import {NetworkService} from '../../providers/network';
+import {SettingsService} from '../../providers/settings';
 
 
 export abstract class FestiAccessPage implements Navigation {
@@ -22,6 +23,7 @@ export abstract class FestiAccessPage implements Navigation {
     protected datePipe: DatePipe;
     protected location: Location;
     protected network: NetworkService;
+    protected settings: SettingsService;
 
     protected constructor(injector: Injector, API_PATH = null) {
         this.dataProvider = injector.get(DataProvider);
@@ -33,6 +35,7 @@ export abstract class FestiAccessPage implements Navigation {
         this.datePipe = injector.get(DatePipe);
         this.location = injector.get(Location);
         this.network = injector.get(NetworkService);
+        this.settings = injector.get(SettingsService);
 
         this.apiService = new ApiService();
 

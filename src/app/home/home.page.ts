@@ -9,8 +9,6 @@ import {ConnectedUser} from '../models/ConnectedUser';
 })
 
 export class HomePage extends FestiAccessPage implements OnInit {
-    appVersion: AppVersion;
-
     constructor(injector: Injector) {
         super(injector);
         console.log('entered home');

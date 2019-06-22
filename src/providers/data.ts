@@ -115,36 +115,40 @@ export class DataProvider {
             });
         }
 
-        promise.then((response) => {
-            console.log('response: ' + response);
-            console.log(response);
-            if (storeIn !== null) {
-                if (this.getDataFromHttpResponse(response) !== null &&
-                    this.getDataFromApiResponse(this.getDataFromHttpResponse(response)).length > 0) {
+        promise
+            .then((response) => {
+                console.log('response: ' + response);
+                console.log(response);
+                if (storeIn !== null) {
+                    if (this.getDataFromHttpResponse(response) !== null &&
+                        this.getDataFromApiResponse(this.getDataFromHttpResponse(response)).length > 0) {
 
-                    /**
-                     * Store in memory cache
-                     */
-                    this.storeDataInMemoryCache(this.getDataFromApiResponse(this.getDataFromHttpResponse(response)), storeIn);
+                        /**
+                         * Store in memory cache
+                         */
+                        this.storeDataInMemoryCache(this.getDataFromApiResponse(this.getDataFromHttpResponse(response)), storeIn);
 
-                    /**
-                     *  Store response in storage cache
-                     */
-                    this.storeDataInStorage(this.getDataFromApiResponse(this.getDataFromHttpResponse(response)), storeIn);
+                        /**
+                         *  Store response in storage cache
+                         */
+                        this.storeDataInStorage(this.getDataFromApiResponse(this.getDataFromHttpResponse(response)), storeIn);
 
-                    /**
-                     *  Add all requests in HttpRequestCache (by using HttpRequestCacher)
-                     *  Store this HttpRequestCache into the storage cache
-                     */
-                    this.httpRequestCacheManager.addHttpCache(apiService.fullUrl(), method, response);
-                    this.storeDataInStorage(this.httpRequestCacheManager.allCache, HttpRequestCacheManager);
+                        /**
+                         *  Add all requests in HttpRequestCache (by using HttpRequestCacher)
+                         *  Store this HttpRequestCache into the storage cache
+                         */
+                        this.httpRequestCacheManager.addHttpCache(apiService.fullUrl(), method, response);
+                        this.storeDataInStorage(this.httpRequestCacheManager.allCache, HttpRequestCacheManager);
 
 
-                } else {
-                    throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
+                    } else {
+                        throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
+                    }
                 }
-            }
-        });
+            })
+            .catch((error) => {
+                throw Error('erreur: ' + error);
+            });
 
         return promise;
     }
@@ -249,7 +253,7 @@ export class DataProvider {
         return result.join('&');
     }
 
-    private storeDataInMemoryCache(data, storeIn: ClassType<any>) {
+    storeDataInMemoryCache(data, storeIn: ClassType<any>) {
         const objectToArray = [];
         if (data instanceof Array) {
             data.forEach((object) => {
@@ -267,7 +271,11 @@ export class DataProvider {
 
     }
 
-    private storeDataInStorage(data, storeIn: ClassType<any>) {
+    private deleteInMemoryCache(toDelete: ClassType<any>) {
+        this.requestsResultCache.delete(toDelete.name);
+    }
+
+    storeDataInStorage(data, storeIn: ClassType<any>) {
         const objectToArray = [];
         if (data instanceof Array) {
             data.forEach((object) => {
@@ -277,9 +285,19 @@ export class DataProvider {
         }
 
         this.storage.ready().then(() => {
-            this.storage.set(storeIn.name, data).then(() => {
-                console.log('data stored in storage for: ' + storeIn.name);
-            });
+            this.storage.set(storeIn.name, data)
+                .then(() => {
+                    console.log('data stored in storage for: ' + storeIn.name);
+                })
+                .catch((error) => {
+                    console.log('error in storeDataInStorage: ' + error);
+                });
+        });
+    }
+
+    private deleteDataInStorage(toDelete: ClassType<any>) {
+        this.storage.remove(toDelete.name).then(() => {
+            console.log('Deleted ' + toDelete.name);
         });
     }
 
@@ -305,6 +323,11 @@ export class DataProvider {
 
     private getHttpResponseFromCache(url: string, requestType: string) {
         return this.httpRequestCacheManager.getHttpCache(url, requestType);
+    }
+
+    deleteFromMemoryAndStorageCache(toDelete: ClassType<any>) {
+        this.deleteDataInStorage(toDelete);
+        this.deleteInMemoryCache(toDelete);
     }
 
 }
