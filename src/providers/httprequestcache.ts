@@ -2,17 +2,22 @@ import {HttpRequestCacheManager} from '../app/models/HttpRequestCacheManager';
 import {HttpRequestCache} from '../app/models/HttpRequestCache';
 import {DataProvider} from './data';
 
-export class HttpRequestCacheContainer extends HttpRequestCacheManager {
+export class HttpRequestCacheContainer {
+    cacheManager: HttpRequestCacheManager;
 
     constructor(private _dataProvider: DataProvider) {
-        super();
-        this.allCache = new Array<HttpRequestCache>();
-
+        this.cacheManager = new HttpRequestCacheManager();
         // Let's take all what's already in the storage and assign it to httpRequestCacheManager
         this._dataProvider.getFromMemoryOrStorageCache(HttpRequestCacheManager)
-            .then((cache) => {
-                if (cache !== null) {
-                    this.allCache = cache;
+            .then((cacheManager) => {
+                if (cacheManager !== null) {
+                    console.log('cacheManager returned: ');
+                    console.log(cacheManager);
+                    this.cacheManager = cacheManager;
+                    console.log('output:');
+                    console.log(this.cacheManager.listOfHttpRequestCache);
+                } else {
+                    throw Error('[HttpRequestCacheContainer]: Error cachemanager is null');
                 }
             });
     }
@@ -23,11 +28,8 @@ export class HttpRequestCacheContainer extends HttpRequestCacheManager {
         let contains = false;
         let positionContains = 0;
 
-        if (this.allCache !== null &&
-            this.allCache !== undefined &&
-            this.allCache.length > 0) {
-
-            this.allCache.forEach((value, index) => {
+        if (this.cacheManager.listOfHttpRequestCache.length > 0) {
+            this.cacheManager.listOfHttpRequestCache.forEach((value, index) => {
                 if (value.link === url && value.type === requestType) {
                     contains = true;
                     positionContains = index;
@@ -36,10 +38,12 @@ export class HttpRequestCacheContainer extends HttpRequestCacheManager {
         }
 
         if (!contains) {
-            this.allCache.push(new HttpRequestCache(url, requestType, data, Date.now()));
+            console.log('what the hell');
+            console.log(this.cacheManager.listOfHttpRequestCache);
+            this.cacheManager.listOfHttpRequestCache.push(new HttpRequestCache(url, requestType, data, Date.now()));
         } else {
-            this.allCache[positionContains].data = data;
-            this.allCache[positionContains].timestamp = Date.now();
+            this.cacheManager.listOfHttpRequestCache[positionContains].data = data;
+            this.cacheManager.listOfHttpRequestCache[positionContains].timestamp = Date.now();
         }
     }
 
@@ -48,11 +52,11 @@ export class HttpRequestCacheContainer extends HttpRequestCacheManager {
         // TODO: Replace the forEach with an associative array ( O(1) access )
         let response = null;
 
-        if (this.allCache !== null &&
-            this.allCache !== undefined &&
-            this.allCache.length > 0) {
+        if (this.cacheManager.listOfHttpRequestCache !== null &&
+            this.cacheManager.listOfHttpRequestCache !== undefined &&
+            this.cacheManager.listOfHttpRequestCache.length > 0) {
 
-            this.allCache.forEach((value, index) => {
+            this.cacheManager.listOfHttpRequestCache.forEach((value) => {
                 if (value.link === url && value.type === requestType) {
                     response = value;
                 }
@@ -63,6 +67,12 @@ export class HttpRequestCacheContainer extends HttpRequestCacheManager {
     }
 
     getAllCache() {
-        return this.allCache;
+        console.log('returning getAllCache: ');
+        console.log(this.cacheManager.listOfHttpRequestCache);
+        return this.cacheManager.listOfHttpRequestCache;
+    }
+
+    getObject(): object {
+        return JSON.parse(JSON.stringify(this.cacheManager));
     }
 }

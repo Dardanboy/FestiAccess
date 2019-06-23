@@ -77,7 +77,7 @@ export class DataProvider {
     /*
      * Send a request to the API and wait for the response.
      */
-    private async httpRequestAndWaitResponse(apiService: ApiService, method: DataProviderEnum, data: any, storeIn: ClassType<any>, storeInStorage: DataProviderStorageEnum): Promise<any> {
+    private httpRequestAndWaitResponse(apiService: ApiService, method: DataProviderEnum, data: any, storeIn: ClassType<any>, storeInStorage: DataProviderStorageEnum): Promise<any> {
         let promise = null;
 
         if (this.networkService.isConnected && this.networkService.network.type !== 'none' && !this._offlineMode) {
@@ -108,7 +108,7 @@ export class DataProvider {
              * No connection, no chocolate.
              * Here we just get what's put in the local cache (in httpRequestCacheService)
              */
-            promise = await new Promise((resolve, reject) => {
+            promise = new Promise((resolve, reject) => {
                 let httpData = this.getHttpResponseFromCache(apiService.fullUrl(), method);
                 console.log('httpData:');
                 console.log(httpData);
@@ -148,10 +148,20 @@ export class DataProvider {
                          *  Store this HttpRequestCache into the storage cache
                          */
                         this.httpCacheContainer.addHttpCache(apiService.fullUrl(), method, response);
-                        // console.log('httpCacheService:' + this.httpCacheContainer.httpRequestCacheManager);
-                        // console.log(this.httpCacheContainer.httpRequestCacheManager);
-                        this.storeDataInStorage(this.httpCacheContainer.getAllCache(), HttpRequestCacheManager);
+                        console.log('object:');
+                        console.log(plainToClass(HttpRequestCacheManager, this.httpCacheContainer.getObject()));
+                        this.storeDataInStorage(this.httpCacheContainer.getObject(), HttpRequestCacheManager);
+                        // let httpRequest = new HttpRequestCacheManager();
 
+                        // this.storage.ready().then(() => {
+                        //     this.storage.set('test', this.httpCacheContainer.getObject())
+                        //         .then(() => {
+                        //             console.log('data stored in storage for: ' + storeIn.name);
+                        //         })
+                        //         .catch((error) => {
+                        //             console.log('error in storeDataInStorage: ' + error);
+                        //         });
+                        // });
                     } else {
                         throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
                     }
@@ -270,6 +280,7 @@ export class DataProvider {
     storeDataInStorage(data, storeIn: ClassType<any>) {
         const objectToArray = [];
         if (data instanceof Array) {
+            console.log(storeIn.name + ' is an instance of array !');
             data.forEach((object) => {
                 objectToArray.push(plainToClass(storeIn, object));
             });
