@@ -1,21 +1,21 @@
 import {Injectable, Injector} from '@angular/core';
 import {Setting} from '../app/models/Setting';
 import {DataProvider} from './data';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 @Injectable()
 export class SettingsService {
     allSettings: Setting;
+    behaviour: BehaviorSubject<Setting>;
 
     constructor(private dataProvider: DataProvider) {
         this.allSettings = new Setting();
 
         this.dataProvider.getFromMemoryOrStorageCache(Setting)
             .then((setting) => {
-                console.log('this.settings:');
-                console.log(setting);
                 if (setting !== null) {
-                    console.log('settings:');
                     this.allSettings = setting;
+                    this.saveSettings(); // We only call it so settings are in memory and in cache
                 } else {
                     console.log('else');
                     this.setDefaultSettingsAndSaveThem();
@@ -25,6 +25,8 @@ export class SettingsService {
                 console.log('settings error:');
                 this.setDefaultSettingsAndSaveThem();
             });
+
+        this.behaviour = new BehaviorSubject<Setting>(this.allSettings);
     }
 
     setDefaultSettingsAndSaveThem() {
@@ -35,5 +37,11 @@ export class SettingsService {
 
     saveSettings() {
         this.dataProvider.storeDataInStorage(this.allSettings, Setting);
+        this.dataProvider.storeDataInMemoryCache(this.allSettings, Setting);
+        this.behaviour.next(this.allSettings);
+    }
+
+    getSetting(): BehaviorSubject<Setting> {
+        return this.behaviour;
     }
 }

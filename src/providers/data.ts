@@ -1,12 +1,13 @@
 import {Storage} from '@ionic/storage';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import {Injectable, Injector} from '@angular/core';
 import {ApiService} from './api';
 import 'reflect-metadata';
 import {plainToClass} from 'class-transformer';
 import {ClassType} from 'class-transformer/ClassTransformer';
+import {NetworkService} from './network';
 import {HttpRequestCacheManager} from '../app/models/HttpRequestCacheManager';
-import {NetworkService} from "./network";
+import {HttpRequestCacheContainer} from './httprequestcache';
 
 export enum DataProviderEnum {
     GET = 'get',
@@ -20,27 +21,16 @@ export enum DataProviderStorageEnum {
     STORE_IN_STORAGE = 'STORE_IN_STORAGE',
 }
 
-export enum ConnectionStatusEnum {
-    Online,
-    Offline
-}
-
 @Injectable()
 export class DataProvider {
-    private requestsResultCache: Map<string, any>;
-    private httpRequestCacheManager: HttpRequestCacheManager;
+    private requestsResultCache: Map<string, any>; // Contains all memory cache
+    private httpCacheContainer: HttpRequestCacheContainer; // Contains all the cache about requests (for offline mode)
+    private offlineMode: boolean; // Is a boolean simulating offline mode
 
     constructor(private storage: Storage, private http: HttpClient, private networkService: NetworkService) {
         this.requestsResultCache = new Map<string, any>();
-        this.initializeHttpRequestCacheWithStorageData();
-
-        this.networkService.network.onDisconnect().subscribe(() => {
-            console.log('disconnected');
-        });
-
-        this.networkService.network.onConnect().subscribe(() => {
-            console.log('connected');
-        });
+        this.httpCacheContainer = new HttpRequestCacheContainer(this);
+        this.offlineMode = true;
     }
 
     /**
@@ -79,8 +69,9 @@ export class DataProvider {
      */
     private httpRequestAndWaitResponse(apiService: ApiService, method: DataProviderEnum, data: any, storeIn: ClassType<any>, storeInStorage: DataProviderStorageEnum): Promise<any> {
         let promise = null;
-        if (this.networkService.isConnected && this.networkService.network.type !== 'none') {
-            console.log('IS CONNECTED');
+
+        if (this.networkService.isConnected && this.networkService.network.type !== 'none' && !this.offlineMode) {
+
             if (method === DataProviderEnum.POST || method === DataProviderEnum.PUT) {
                 if (typeof data === 'object') {
                     data = this.serializeObject(data);
@@ -95,6 +86,7 @@ export class DataProvider {
                     }
                 ).toPromise();
 
+
             } else { // Get and Delete requests
                 // this.http[method] is the method called on http class. It can be this.http.get or this.http.delete here
                 promise = this.http[method](apiService.fullUrl(), {observe: 'response'}).toPromise();
@@ -104,7 +96,7 @@ export class DataProvider {
 
             /**
              * No connection, no chocolate.
-             * Here we just get what's put in the local cache (in HttpRequestCacheManager)
+             * Here we just get what's put in the local cache (in httpRequestCacheService)
              */
             console.log('what\' returned by getHttpResponseFromCache ?:');
             console.log(this.getHttpResponseFromCache(apiService.fullUrl(), method));
@@ -137,9 +129,10 @@ export class DataProvider {
                          *  Add all requests in HttpRequestCache (by using HttpRequestCacher)
                          *  Store this HttpRequestCache into the storage cache
                          */
-                        this.httpRequestCacheManager.addHttpCache(apiService.fullUrl(), method, response);
-                        this.storeDataInStorage(this.httpRequestCacheManager.allCache, HttpRequestCacheManager);
-
+                        this.httpCacheContainer.addHttpCache(apiService.fullUrl(), method, response);
+                        // console.log('httpCacheService:' + this.httpCacheContainer.httpRequestCacheManager);
+                        // console.log(this.httpCacheContainer.httpRequestCacheManager);
+                        this.storeDataInStorage(this.httpCacheContainer.getAllCache(), HttpRequestCacheManager);
 
                     } else {
                         throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
@@ -147,7 +140,12 @@ export class DataProvider {
                 }
             })
             .catch((error) => {
-                throw Error('erreur: ' + error);
+                console.log('error');
+                if (typeof error === 'object') {
+                    throw Error(this.serializeObject(error));
+                } else {
+                    throw Error(error);
+                }
             });
 
         return promise;
@@ -228,22 +226,6 @@ export class DataProvider {
         return await Promise.resolve(plainToClass(storedIn, result));
     }
 
-    private get(toGet) {
-        return this.storage.get(toGet);
-    }
-
-    private init() {
-        // this.user = (new User('Dardan', 'Iljazi', false, 'cmFuZG9tX2hhc2g=', new Role('invited'), []));
-    }
-
-    private store(key, data) {
-        return this.storage.set(key, data);
-    }
-
-    private clear() {
-        return this.storage.clear();
-    }
-
     private serializeObject(object) {
         const result = [];
 
@@ -268,7 +250,6 @@ export class DataProvider {
         console.log('plainToClass:');
         console.log(plainToClass(storeIn, data));
         this.requestsResultCache.set(storeIn.name, plainToClass(storeIn, data));
-
     }
 
     private deleteInMemoryCache(toDelete: ClassType<any>) {
@@ -309,25 +290,12 @@ export class DataProvider {
         return apiResponse.data;
     }
 
-    private initializeHttpRequestCacheWithStorageData() {
-        this.httpRequestCacheManager = new HttpRequestCacheManager();
-        this.getFromMemoryOrStorageCache(HttpRequestCacheManager).then((data) => {
-            console.log('data for httpRequestCacheManager:');
-            if (data !== null) {
-                this.httpRequestCacheManager = plainToClass(HttpRequestCacheManager, this.serializeObject(data));
-                console.log('httpRequestCacheManager:');
-                console.log(this.httpRequestCacheManager);
-            }
-        });
-    }
-
     private getHttpResponseFromCache(url: string, requestType: string) {
-        return this.httpRequestCacheManager.getHttpCache(url, requestType);
+        return this.httpCacheContainer.getHttpCache(url, requestType);
     }
 
     deleteFromMemoryAndStorageCache(toDelete: ClassType<any>) {
         this.deleteDataInStorage(toDelete);
         this.deleteInMemoryCache(toDelete);
     }
-
 }

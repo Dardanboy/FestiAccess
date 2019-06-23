@@ -21,6 +21,8 @@ import {NetworkService} from '../providers/network';
 import { Network } from '@ionic-native/network/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {SettingsService} from '../providers/settings';
+import {HttpRequestCacheContainer} from '../providers/httprequestcache';
+
 
 @NgModule({
     declarations: [AppComponent],
@@ -44,7 +46,7 @@ import {SettingsService} from '../providers/settings';
         NetworkService,
         Network,
         AppVersion,
-        SettingsService
+        SettingsService,
     ],
     bootstrap: [AppComponent]
 })

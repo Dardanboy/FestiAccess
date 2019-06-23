@@ -93,7 +93,6 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
     reloadUserWithFriends() {
         this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser).then((user) => {
             let actualUser = user.id;
-
             this.apiService.API_PATH = '/api/dii/users/' + actualUser;
 
             this.startLoading();

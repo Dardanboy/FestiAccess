@@ -10,6 +10,7 @@ import {NavController} from '@ionic/angular';
 import {DatePipe, Location} from '@angular/common';
 import {NetworkService} from '../../providers/network';
 import {SettingsService} from '../../providers/settings';
+import {Setting} from "../models/Setting";
 
 
 export abstract class FestiAccessPage implements Navigation {
@@ -38,6 +39,12 @@ export abstract class FestiAccessPage implements Navigation {
         this.settings = injector.get(SettingsService);
 
         this.apiService = new ApiService();
+
+        this.settings.getSetting().subscribe((setting) => {
+            if (setting.apiLink !== null && setting.apiLink !== undefined) {
+                this.apiService.API_URL = setting.apiLink;
+            }
+        });
 
         if (API_PATH !== null) {
             this.apiService.API_PATH = API_PATH;
