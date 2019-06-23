@@ -113,7 +113,14 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
                     });
                 })
                 .catch((error: any) => {
-                    this.showMessage('[Friends:110] Erreur: ' + error.message + '\nVeuillez ressayer ou contacter l\'administrateur', 2500);
+                    let message = null;
+                    if (error !== null && error.message !== null && error.message !== undefined) {
+                        message = error.message;
+                    } else {
+                        message = error;
+                    }
+
+                    this.showMessage('[Friends:110] Erreur: ' + error + '\nVeuillez ressayer ou contacter l\'administrateur', 2500);
                 })
                 .finally(() => {
                     this.stopLoading();

@@ -71,6 +71,16 @@ export abstract class FestiAccessPage implements Navigation {
                 }
             });
 
+            this.network.getNetwork().onDisconnect().subscribe(() => {
+                console.log('disconnected');
+                this.offlineMode = true;
+            });
+
+            this.network.getNetwork().onConnect().subscribe(() => {
+                console.log('reconnect');
+                this.offlineMode = false;
+            });
+
             /**
              * Get instantly changes on offline mode that are given by DataProvider
              */

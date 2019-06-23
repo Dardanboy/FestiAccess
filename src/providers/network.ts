@@ -6,16 +6,7 @@ export class NetworkService {
     private _isConnected;
 
     constructor(private _network: Network) {
-        this._isConnected = false;
-        this._isConnected = this._network.onDisconnect().subscribe(() => {
-            console.log('disconnected');
-            this._isConnected = false;
-        });
-
-        this._network.onConnect().subscribe(() => {
-            console.log('disconnected');
-            this._isConnected = true;
-        });
+        this._isConnected = true;
     }
 
     get network(): Network {
@@ -24,5 +15,9 @@ export class NetworkService {
 
     get isConnected() {
         return this._isConnected;
+    }
+
+    getNetwork() {
+        return this._network;
     }
 }
