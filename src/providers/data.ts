@@ -8,6 +8,7 @@ import {ClassType} from 'class-transformer/ClassTransformer';
 import {NetworkService} from './network';
 import {HttpRequestCacheManager} from '../app/models/HttpRequestCacheManager';
 import {HttpRequestCacheContainer} from './httprequestcache';
+import {BehaviorSubject} from 'rxjs';
 
 export enum DataProviderEnum {
     GET = 'get',
@@ -24,13 +25,22 @@ export enum DataProviderStorageEnum {
 @Injectable()
 export class DataProvider {
     private requestsResultCache: Map<string, any>; // Contains all memory cache
+    /**
+     * Used for offline mode
+     */
     private httpCacheContainer: HttpRequestCacheContainer; // Contains all the cache about requests (for offline mode)
     private _offlineMode: boolean; // Is a boolean simulating offline mode
+    private actualDataInformationsForOfflineMode: BehaviorSubject<object>;
+
 
     constructor(private storage: Storage, private http: HttpClient, private networkService: NetworkService) {
         this.requestsResultCache = new Map<string, any>();
+        /**
+         * Used for offline mode
+         */
         this.httpCacheContainer = new HttpRequestCacheContainer(this);
         this._offlineMode = false;
+        this.actualDataInformationsForOfflineMode = new BehaviorSubject<object>(null);
     }
 
     /**
@@ -67,7 +77,7 @@ export class DataProvider {
     /*
      * Send a request to the API and wait for the response.
      */
-    private httpRequestAndWaitResponse(apiService: ApiService, method: DataProviderEnum, data: any, storeIn: ClassType<any>, storeInStorage: DataProviderStorageEnum): Promise<any> {
+    private async httpRequestAndWaitResponse(apiService: ApiService, method: DataProviderEnum, data: any, storeIn: ClassType<any>, storeInStorage: DataProviderStorageEnum): Promise<any> {
         let promise = null;
 
         if (this.networkService.isConnected && this.networkService.network.type !== 'none' && !this._offlineMode) {
@@ -98,19 +108,27 @@ export class DataProvider {
              * No connection, no chocolate.
              * Here we just get what's put in the local cache (in httpRequestCacheService)
              */
-            console.log('what\' returned by getHttpResponseFromCache ?:');
-            console.log(this.getHttpResponseFromCache(apiService.fullUrl(), method));
-
-            promise = new Promise((resolve) => {
+            promise = await new Promise((resolve, reject) => {
                 let httpData = this.getHttpResponseFromCache(apiService.fullUrl(), method);
-                resolve(httpData.data);
+                console.log('httpData:');
+                console.log(httpData);
+                if (httpData !== null) {
+                    resolve(httpData.data);
+                    // Let's 'emit' the last information about data actually asked
+                    this.actualDataInformationsForOfflineMode.next(httpData.data);
+                } else {
+                    reject('Vous êtes hors-ligne et il n\'est pas possible d\'effectuer cette action ' +
+                        '(aucune donnée hors-ligne pour cette requête n\'existe)');
+                }
             });
         }
 
         promise
             .then((response) => {
+                console.log('THEN');
                 console.log('response: ' + response);
                 console.log(response);
+
                 if (storeIn !== null) {
                     if (this.getDataFromHttpResponse(response) !== null &&
                         this.getDataFromApiResponse(this.getDataFromHttpResponse(response)).length > 0) {
@@ -138,15 +156,8 @@ export class DataProvider {
                         throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
                     }
                 }
-            })
-            .catch((error) => {
-                console.log('error');
-                if (typeof error === 'object') {
-                    throw Error(this.serializeObject(error));
-                } else {
-                    throw Error(error);
-                }
             });
+
 
         return promise;
     }
@@ -299,7 +310,16 @@ export class DataProvider {
         this.deleteInMemoryCache(toDelete);
     }
 
+    /**
+     *
+     * Used for offline mode
+     */
+
     set offlineMode(value: boolean) {
         this._offlineMode = value;
+    }
+
+    getActualInfoBehaviour() {
+        return this.actualDataInformationsForOfflineMode;
     }
 }

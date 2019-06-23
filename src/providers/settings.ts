@@ -41,7 +41,7 @@ export class SettingsService {
         this.behaviour.next(this.allSettings);
     }
 
-    getSetting(): BehaviorSubject<Setting> {
+    getSettingBehaviour(): BehaviorSubject<Setting> {
         return this.behaviour;
     }
 }

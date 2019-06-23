@@ -23,7 +23,7 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
                 this.classifyFriendsFromHereToNot();
             })
             .catch((error) => {
-                this.showMessage('Erreur: ' + error);
+                this.showMessage('[Friends:26] Erreur: ' + error);
             });
     }
 
@@ -82,7 +82,7 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
                     }
                 })
                 .catch((error: any) => {
-                    this.showMessage('Erreur: ' + error.message + '\nVeuillez ressayer ou contacter l\'administrateur', 7500);
+                    this.showMessage('[Friends:85] Erreur: ' + error.message + '\nVeuillez ressayer ou contacter l\'administrateur', 7500);
                 })
                 .finally(() => {
                     this.reloadUserWithFriends();
@@ -107,7 +107,7 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
                     });
                 })
                 .catch((error: any) => {
-                    this.showMessage('Erreur: ' + error.message + '\nVeuillez ressayer ou contacter l\'administrateur', 7500);
+                    this.showMessage('[Friends:110] Erreur: ' + error.message + '\nVeuillez ressayer ou contacter l\'administrateur', 7500);
                 })
                 .finally(() => {
                     this.stopLoading();

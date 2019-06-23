@@ -54,7 +54,11 @@ export class SubscriptionPage extends FestiAccessPage implements OnInit, APIReso
             })
             .catch((error) => {
                 console.log('error: ' + error);
-                this.showMessage('Erreur: ' + error.message);
+                if (error !== null && error.message !== undefined && error.message !== null) {
+                    this.showMessage('[Subscription] Erreur: ' + error.message);
+                } else {
+                    this.showMessage('[Subscription] Erreur: ' + error);
+                }
             });
     }
 

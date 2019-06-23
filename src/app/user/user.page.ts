@@ -1,10 +1,7 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {FestiAccessPage} from '../extends/festi-access-page';
-import {APIResource} from '../implements/apiresource';
-import {DataProviderEnum} from '../../providers/data';
 import {ActivatedRoute} from '@angular/router';
 import {User} from '../models/User';
-import {ConnectedUser} from '../models/ConnectedUser';
 
 @Component({
     selector: 'app-user',
@@ -25,12 +22,18 @@ export class UserPage extends FestiAccessPage implements OnInit {
             .then((data) => {
                 this.user = null;
 
-                this.dataProvider.getFromMemoryOrStorageCache(User).then((user) => {
-                    this.user = user;
-                });
+                // this.dataProvider.getFromMemoryOrStorageCache(User).then((user) => {
+                //     this.user = user;
+                // });
             })
             .catch((error: any) => {
-                this.showMessage('Erreur: ' + error.message + '\nVeuillez ressayer ou contacter l\'administrateur', 7500);
+                let message = null;
+                if (error !== null && error.message !== undefined && error.message !== null) {
+                    message = error.message;
+                } else {
+                    message = error;
+                }
+                this.showMessage('[User] Erreur: ' + message + '\nVeuillez ressayer ou contacter l\'administrateur', 2500);
             })
             .finally(() => {
                 this.stopLoading();

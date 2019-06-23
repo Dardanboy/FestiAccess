@@ -10,8 +10,6 @@ import {NavController} from '@ionic/angular';
 import {DatePipe, Location} from '@angular/common';
 import {NetworkService} from '../../providers/network';
 import {SettingsService} from '../../providers/settings';
-import {Setting} from "../models/Setting";
-
 
 export abstract class FestiAccessPage implements Navigation {
     protected dataProvider: DataProvider;
@@ -25,7 +23,12 @@ export abstract class FestiAccessPage implements Navigation {
     protected location: Location;
     protected network: NetworkService;
     protected settings: SettingsService;
+    /**
+     * Used for offline mode
+     */
     protected offlineMode: boolean;
+    // Contains the last information asked in offline mode (returned by storage)
+    protected shownOfflineElementsData: object;
 
     protected constructor(injector: Injector, API_PATH = null) {
         this.dataProvider = injector.get(DataProvider);
@@ -41,8 +44,15 @@ export abstract class FestiAccessPage implements Navigation {
 
         this.apiService = new ApiService();
 
+        if (API_PATH !== null) {
+            this.apiService.API_PATH = API_PATH;
+        }
 
-        this.settings.getSetting().subscribe((setting) => {
+
+        /**
+         * Get instantly changes to the settings by using BehaviourSubject/Observer
+         */
+        this.settings.getSettingBehaviour().subscribe((setting) => {
             if (setting.apiLink !== null && setting.apiLink !== undefined) {
                 this.apiService.API_URL = setting.apiLink;
             }
@@ -53,10 +63,20 @@ export abstract class FestiAccessPage implements Navigation {
             }
         });
 
-        if (API_PATH !== null) {
-            this.apiService.API_PATH = API_PATH;
-        }
+        /**
+         * Get instantly changes on offline mode that are given by DataProvider
+         */
+        this.dataProvider.getActualInfoBehaviour().subscribe((data) => {
+            console.log('shownOfflineElements:');
+            console.log(data);
+            if (data !== null) {
+                this.shownOfflineElementsData = data;
+
+            }
+        });
+
     }
+
 
     goTo(link, params: number = null): void {
         this.router.navigate(['/' + link + ((params !== null && params !== undefined) ? '/' + params.toString() : '')])
@@ -114,7 +134,8 @@ export abstract class FestiAccessPage implements Navigation {
 
     showAlertForOfflineMode() {
         this.showAlert('Mode hors-ligne',
-            'Vous êtes actuellement hors-ligne. Les données que vous voyez ne sont pas synchronisées et proviennent des dernières données récupérées en ligne.',
+            'Vous êtes actuellement hors-ligne. ' +
+            'Les données que vous voyez ne sont pas synchronisées et proviennent des dernières données récupérées en ligne.',
             [{
                 text: 'J\'ai compris',
                 action: () => {
