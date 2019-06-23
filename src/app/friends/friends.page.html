@@ -1,39 +1,74 @@
-<ion-content>.
-    <ion-grid class="flex ion-justify-content-center ion-align-items-center">
+<ion-header>
+    <ion-toolbar>
+        <ion-title class="ion-text-center">
+            Contacts
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content class="mb-5">
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.75" pullMin="60" pullMax="50">
+        <ion-refresher-content
+            pullingText="Glisser pour rafraîchir"
+            refreshingSpinner="circles"
+            refreshingText="Rechargement...">
+        </ion-refresher-content>
+    </ion-refresher>
+    <ion-fab vertical="top" horizontal="start" slot="fixed" class="ion-fab" (click)="goTo('add-friend')">
+        <ion-fab-button>
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+    <ion-grid class="flex ion-justify-content-center ion-align-items-center mt-5">
         <ion-row class="ion-align-items-center ion-justify-content-center">
-            <ion-col size="12" class="flex ion-justify-content-center">
-                <ion-button size="large" (click)="goTo('addfriend')">Ajouter un contact</ion-button>
-            </ion-col>
-            <ion-col size="12">
-                <h2>Contacts</h2>
-                <ion-list *ngIf="user !== null && user !== undefined">
+<!--            <ion-col size="12" class="flex ion-justify-content-center">-->
+<!--                <ion-button size="large" (click)="goTo('add-friend')">Ajouter un contact</ion-button>-->
+<!--            </ion-col>-->
 
-                    <!-- Present people (shown first) -->
+            <ion-col size="12">
+                <ion-list *ngIf="user !== null && user !== undefined">
+                    <!-- User has contacts -->
                     <ng-container *ngFor="let friend of user.friends">
-                        <ion-item class="item ios in-list ion-focusable item-label hydrated" *ngIf="friend.ishere">
+                        <ion-item class="item ios in-list ion-focusable item-label hydrated"
+                                  [ngClass]="{'item-interactive-disabled': !friend.ishere}">
+                            <!-- User avatar -->
                             <ion-avatar slot="start" class="ios hydrated">
                                 <ion-icon name="contact" class="friends-picture"></ion-icon>
                             </ion-avatar>
+                            <!-- User informations -->
                             <ion-label class="sc-ion-label-ios-h sc-ion-label-ios-s ios hydrated">
-                                <h2>{{ friend.name + ' ' + friend.surname }}</h2>
-                                <h3><span class="circle-friend bg-success"></span> {{ (friend.ishere) ? 'Présent au festival' : 'Non présent au festival' }}</h3>
-                                <p>{{ friend.ishere ? 'Entré au' : 'Sorti du' }} festival à {{ this.datePipe.transform(friend.ishere_changed_at, 'h:mm') }}</p>
+                                <h2>
+                                    {{ friend.name + ' ' + friend.surname }}
+                                </h2>
+                                <h3>
+                                    <span class="circle-friend"
+                                          [ngClass]="{'bg-success': friend.ishere, 'bg-medium': !friend.ishere }">
+                                    </span>
+                                    {{ (friend.ishere) ? 'Présent au festival' : 'Non présent au festival' }}
+                                </h3>
+                                <p>
+                                    <ng-container *ngIf="friend.ishere_changed_at">
+                                        {{ friend.ishere ? 'Entré au' : 'Sorti du' }} festival
+                                        à {{ this.datePipe.transform(friend.ishere_changed_at, 'h:mm') }}
+                                    </ng-container>
+                                    <ng-container *ngIf="!friend.ishere_changed_at">
+                                        Pas encore entré au festival
+                                    </ng-container>
+                                </p>
                             </ion-label>
+                            <!-- Action buttons -->
+                            <ion-button class="btn-no-bg btn-no-shadow black-text" color="transparent" expand="block"
+                                        size="small" float-right (click)="this.showContactInfo(friend.id)">
+                                <ion-icon ios="ios-more" md="md-more"></ion-icon>
+                            </ion-button>
+                            <ion-button class="btn-no-bg btn-no-shadow black-text" color="transparent" expand="block"
+                                        size="small" float-right (click)="this.deleteContact(friend.id)">
+                                <ion-icon ios="ios-close" md="md-close"></ion-icon>
+                            </ion-button>
                         </ion-item>
                     </ng-container>
-
-                    <!-- Not present people (shown at the end)-->
-                    <ng-container *ngFor="let friend of user.friends">
-                        <ion-item class="item ios in-list ion-focusable item-label item-interactive-disabled hydrated" *ngIf="!friend.ishere">
-                            <ion-avatar slot="start" class="ios hydrated">
-                                <ion-icon name="contact" class="friends-picture"></ion-icon>
-                            </ion-avatar>
-                            <ion-label class="sc-ion-label-ios-h sc-ion-label-ios-s ios hydrated">
-                                <h2>{{ friend.name + ' ' + friend.surname }}</h2>
-                                <h3><span class="circle-friend bg-medium"></span> {{ (friend.ishere) ? 'Présent au festival' : 'Non présent au festival' }}</h3>
-                                <p>{{ friend.ishere ? 'Entré au' : 'Sorti du' }} festival à {{ this.datePipe.transform(friend.ishere_changed_at, 'h:mm') }}</p>
-                            </ion-label>
-                        </ion-item>
+                    <!-- User has no contacts -->
+                    <ng-container *ngIf="user.friends.length === 0">
+                        <p text-center>Vous n'avez pas encore de contacts</p>
                     </ng-container>
                 </ion-list>
             </ion-col>

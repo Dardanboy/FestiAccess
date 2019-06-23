@@ -9,6 +9,9 @@ const routes: Routes = [
     { path: 'connection', loadChildren: './connection/connection.module#ConnectionPageModule' },
     { path: 'subscription', loadChildren: './subscription/subscription.module#SubscriptionPageModule' , canLoad: [AuthGuardService]},
     { path: 'friends', loadChildren: './friends/friends.module#FriendsPageModule', canLoad: [AuthGuardService]},
+    { path: 'add-friend', loadChildren: './add-friend/add-friend.module#AddFriendPageModule', canLoad: [AuthGuardService]},
+    { path: 'user/:id', loadChildren: './user/user.module#UserPageModule', canLoad: [AuthGuardService] },
+    { path: 'settings', loadChildren: './settings/settings.module#SettingsPageModule' },
     { path: '', loadChildren: './tabs/tabs/tabs.module#TabsPageModule', canLoad: [AuthGuardService]},
 ];
 

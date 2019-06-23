@@ -1,9 +1,9 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {FestiAccessPage} from '../extends/festi-access-page';
 import {FingerprintAIO} from '@ionic-native/fingerprint-aio/ngx';
-import {DataProviderEnum} from '../../providers/data';
+import {DataProviderStorageEnum} from '../../providers/data';
 import {APIResource} from '../implements/apiresource';
-import {User} from '../models/User';
+import {ConnectedUser} from '../models/ConnectedUser';
 
 @Component({
     selector: 'app-connection',
@@ -33,30 +33,41 @@ export class ConnectionPage extends FestiAccessPage implements OnInit, APIResour
             .then((result: any) => {
                 this.startLoading();
 
-                this.dataProvider.sendAndWaitResponse(this.apiService, DataProviderEnum.POST, this.apiResource(result), User)
+                this.dataProvider.httpPostRequest(this.apiService, this.apiResource(result), ConnectedUser, DataProviderStorageEnum.STORE_IN_STORAGE)
                     .then((data) => {
-                        console.log('connection data: ');
-                        console.log(data);
-                        this.goTo('tabs');
+                        if (data !== null) {
+                            this.goTo('tabs');
+                        } else {
+
+                        }
                     })
                     .catch((error: any) => {
-                        if (error.status === 401 && error.error.message === 'AUTHENTIFICATION_FAIL'){
+
+                        if (error.status === 401 && error.error.message === 'AUTHENTIFICATION_FAIL') {
                             this.showMessage(
-                                'Erreur: Impossible de reconnaître votre empreinte.\n' +
+                                '[Connection:45] Erreur: Impossible de reconnaître votre empreinte.\n' +
                                 'Êtes-vous inscrit ? Si oui, veuillez ressayer, si non veuillez vous inscrire depuis la page d\'accueil'
                                 , 8000);
                         } else {
-                            this.showMessage('Erreur: ' + error.message + '\nVeuillez ressayer ou contacter l\'administrateur', 7500);
+                            let message = null;
+                            if (error.message !== undefined && error.message !== null) {
+                                message = error.message;
+                            } else {
+                                message = error;
+                            }
+                            this.showMessage('[Connection:49] Erreur: ' + message +
+                                '\nVeuillez ressayer ou contacter l\'administrateur', 2500);
                         }
                     })
                     .finally(() => {
+
                         this.stopLoading();
                     });
 
             })
             .catch((error: any) => {
                 console.log('error: ' + error);
-                this.showMessage('Erreur: ' + error.message);
+                this.showMessage('[Connection:60] Erreur: ' + error.message);
             });
     }
 

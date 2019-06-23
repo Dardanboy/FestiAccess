@@ -12,7 +12,7 @@ import {User} from '../models/User';
 })
 
 export class SubscriptionPage extends FestiAccessPage implements OnInit, APIResource {
-    private user: FormGroup;
+    user: FormGroup;
 
     constructor(injector: Injector, private formBuilder: FormBuilder) {
         super(injector, '/api/dii/subscription');
@@ -35,12 +35,7 @@ export class SubscriptionPage extends FestiAccessPage implements OnInit, APIReso
     subscribe() {
         this.user.value.fingerPrintHash = this.generateTempFingerPrintHash(this.user.value.name, this.user.value.surname);
 
-        this.dataProvider.sendAndWaitResponse(
-            this.apiService,
-            DataProviderEnum.POST,
-            this.apiResource(this.user.value.name, this.user.value.surname, this.user.value.fingerPrintHash),
-            User
-        )
+        this.dataProvider.httpPostRequest(this.apiService, this.apiResource(this.user.value.name, this.user.value.surname, this.user.value.fingerPrintHash), User)
             .then((data) => {
                 console.log('data');
                 console.log(data);
@@ -59,7 +54,11 @@ export class SubscriptionPage extends FestiAccessPage implements OnInit, APIReso
             })
             .catch((error) => {
                 console.log('error: ' + error);
-                this.showMessage('Erreur: ' + error.message);
+                if (error !== null && error.message !== undefined && error.message !== null) {
+                    this.showMessage('[Subscription] Erreur: ' + error.message);
+                } else {
+                    this.showMessage('[Subscription] Erreur: ' + error);
+                }
             });
     }
 

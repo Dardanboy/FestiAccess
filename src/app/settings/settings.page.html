@@ -1,0 +1,47 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button text=""></ion-back-button>
+        </ion-buttons>
+        <ion-title class="ion-text-center">
+            Paramètres
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-grid class="h-75 flex ion-justify-content-center ion-align-items-center">
+        <ion-row class="ion-align-items-center ion-justify-content-center">
+            <ion-list>
+                <ng-container *ngIf="this.settings !== null && this.settings !== undefined">
+                    <ion-item *ngIf="settings.allSettings.offlineMode !== null">
+                        <ion-label>Mode hors-ligne</ion-label>
+                        <ion-toggle [(ngModel)]="settings.allSettings.offlineMode" color="primary"
+                                    [checked]="settings.allSettings.offlineMode"></ion-toggle>
+                    </ion-item>
+
+                    <ion-item *ngIf="settings.allSettings.apiLink !== null">
+                        <ion-label position="stacked">URL de l'API</ion-label>
+                        <ion-input [(ngModel)]="settings.allSettings.apiLink"
+                                   [value]="settings.allSettings.apiLink"></ion-input>
+                    </ion-item>
+
+                    <ion-item class="mt-2" *ngIf="isConnected">
+                        <a class="w-100" (click)="disconnect()" style="vertical-align: middle;">
+                            <ion-icon ios="ios-exit" md="md-exit" style="vertical-align: middle"></ion-icon>
+                            Déconnexion</a>
+                    </ion-item>
+
+                    <div class="mt-10">
+                        <ion-button size="full" color="primary" (click)="saveSettings()">
+                            Sauvegarder les modifications
+                        </ion-button>
+                        <ion-button size="full" color="medium" (click)="wantToResetToDefaultQuestion()">
+                            Remettre les valeurs par défaut
+                        </ion-button>
+                    </div>
+                </ng-container>
+            </ion-list>
+        </ion-row>
+    </ion-grid>
+</ion-content>

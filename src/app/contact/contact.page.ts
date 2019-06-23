@@ -15,11 +15,4 @@ export class ContactPage extends FestiAccessPage implements OnInit {
     ngOnInit(): void {
 
     }
-
-    goTo(link: string): void {
-
-    }
-
-
-
 }

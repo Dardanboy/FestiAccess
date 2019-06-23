@@ -1,0 +1,39 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button text=""></ion-back-button>
+        </ion-buttons>
+        <ion-title class="ion-text-center">
+            Ajout de contact
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-grid class="flex ion-justify-content-center ion-align-items-center">
+        <ion-row class="ion-align-items-center ion-justify-content-center">
+            <ion-col size="12" class="flex flex-column ion-justify-content-center ion-text-center ion-align-items-center">
+                <ng-container *ngIf="this.instructionMessageShown === false">
+                    <ion-icon ios="ios-information-circle" md="md-information-circle" class="information-add-friend align-self-center"></ion-icon>
+                    <p class="align-self-center">
+                        Afin d'ajouter un contact, veuillez approcher physiquement la personne avec laquelle vous souhaitez vous connecter.<br /><br />
+                        <strong>Cette dernière</strong> devra déjà posséder un compte sur l'application et passer son empreinte sur le capteur d'empreintes de <strong>votre</strong> téléphone
+                    </p>
+                    <img src="../assets/fingerprint.png" class="img-fingerprint" alt="fingerprint "/>
+                    <ion-button class="mt-5" (click)="instructionMessageUnderstood()">J'ai compris</ion-button>
+                </ng-container>
+
+                <ng-container *ngIf="this.instructionMessageShown === true">
+                    <ion-icon ios="ios-person-add" md="md-person-add" class="information-add-friend align-self-center"></ion-icon>
+                    <p class="align-self-center">
+                        Madame, Monsieur,<br /><br />
+                        Vous vous apprêtez à vous connecter/ajouter un contact avec <strong>{{ user.name + ' ' + user.surname }}</strong><br /><br />
+                        <strong>Mettez votre empreinte sur le capteur</strong> d'empreintes du téléphone pour vous connecter avec la personne<br /><br />
+                        Cela permettra à chacun d'entre-vous de savoir si vous êtes dans le festival lors de l'entrée/sortie
+                    </p>
+                    <ion-icon name="finger-print" class="fingerprint"></ion-icon>
+                    <p class="ion-color-medium">Mettez votre empreinte digitale</p>
+                </ng-container>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>
