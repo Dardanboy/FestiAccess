@@ -25,12 +25,12 @@ export enum DataProviderStorageEnum {
 export class DataProvider {
     private requestsResultCache: Map<string, any>; // Contains all memory cache
     private httpCacheContainer: HttpRequestCacheContainer; // Contains all the cache about requests (for offline mode)
-    private offlineMode: boolean; // Is a boolean simulating offline mode
+    private _offlineMode: boolean; // Is a boolean simulating offline mode
 
     constructor(private storage: Storage, private http: HttpClient, private networkService: NetworkService) {
         this.requestsResultCache = new Map<string, any>();
         this.httpCacheContainer = new HttpRequestCacheContainer(this);
-        this.offlineMode = true;
+        this._offlineMode = false;
     }
 
     /**
@@ -70,7 +70,7 @@ export class DataProvider {
     private httpRequestAndWaitResponse(apiService: ApiService, method: DataProviderEnum, data: any, storeIn: ClassType<any>, storeInStorage: DataProviderStorageEnum): Promise<any> {
         let promise = null;
 
-        if (this.networkService.isConnected && this.networkService.network.type !== 'none' && !this.offlineMode) {
+        if (this.networkService.isConnected && this.networkService.network.type !== 'none' && !this._offlineMode) {
 
             if (method === DataProviderEnum.POST || method === DataProviderEnum.PUT) {
                 if (typeof data === 'object') {
@@ -297,5 +297,9 @@ export class DataProvider {
     deleteFromMemoryAndStorageCache(toDelete: ClassType<any>) {
         this.deleteDataInStorage(toDelete);
         this.deleteInMemoryCache(toDelete);
+    }
+
+    set offlineMode(value: boolean) {
+        this._offlineMode = value;
     }
 }

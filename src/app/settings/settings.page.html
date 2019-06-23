@@ -14,11 +14,11 @@
         <ion-row class="ion-align-items-center ion-justify-content-center">
             <ion-list>
                 <ng-container *ngIf="this.settings !== null && this.settings !== undefined">
-<!--                    <ion-item *ngIf="settings.allSettings.offlineMode !== null">-->
-<!--                        <ion-label>Mode hors-ligne</ion-label>-->
-<!--                        <ion-toggle [(ngModel)]="settings.allSettings.offlineMode" color="primary"-->
-<!--                                    [checked]="settings.allSettings.offlineMode"></ion-toggle>-->
-<!--                    </ion-item>-->
+                    <ion-item *ngIf="settings.allSettings.offlineMode !== null">
+                        <ion-label>Mode hors-ligne</ion-label>
+                        <ion-toggle [(ngModel)]="settings.allSettings.offlineMode" color="primary"
+                                    [checked]="settings.allSettings.offlineMode"></ion-toggle>
+                    </ion-item>
 
                     <ion-item *ngIf="settings.allSettings.apiLink !== null">
                         <ion-label position="stacked">URL de l'API</ion-label>
@@ -27,7 +27,9 @@
                     </ion-item>
 
                     <ion-item class="mt-2" *ngIf="isConnected">
-                        <a class="w-100" (click)="disconnect()" style="vertical-align: middle;"><ion-icon ios="ios-exit" md="md-exit" style="vertical-align: middle"> </ion-icon> Déconnexion</a>
+                        <a class="w-100" (click)="disconnect()" style="vertical-align: middle;">
+                            <ion-icon ios="ios-exit" md="md-exit" style="vertical-align: middle"></ion-icon>
+                            Déconnexion</a>
                     </ion-item>
 
                     <div class="mt-10">

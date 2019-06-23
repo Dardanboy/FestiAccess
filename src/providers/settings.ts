@@ -1,7 +1,7 @@
-import {Injectable, Injector} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Setting} from '../app/models/Setting';
 import {DataProvider} from './data';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 
 @Injectable()
 export class SettingsService {
@@ -15,7 +15,7 @@ export class SettingsService {
             .then((setting) => {
                 if (setting !== null) {
                     this.allSettings = setting;
-                    this.saveSettings(); // We only call it so settings are in memory and in cache
+                    this.saveSettings(); // We only call it so settings are in memory too (not only in cache)
                 } else {
                     console.log('else');
                     this.setDefaultSettingsAndSaveThem();

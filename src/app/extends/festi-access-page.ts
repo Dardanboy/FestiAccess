@@ -25,6 +25,7 @@ export abstract class FestiAccessPage implements Navigation {
     protected location: Location;
     protected network: NetworkService;
     protected settings: SettingsService;
+    protected offlineMode: boolean;
 
     protected constructor(injector: Injector, API_PATH = null) {
         this.dataProvider = injector.get(DataProvider);
@@ -40,9 +41,15 @@ export abstract class FestiAccessPage implements Navigation {
 
         this.apiService = new ApiService();
 
+
         this.settings.getSetting().subscribe((setting) => {
             if (setting.apiLink !== null && setting.apiLink !== undefined) {
                 this.apiService.API_URL = setting.apiLink;
+            }
+
+            if (setting.offlineMode !== null && setting.offlineMode !== undefined) {
+                this.dataProvider.offlineMode = setting.offlineMode;
+                this.offlineMode = setting.offlineMode;
             }
         });
 

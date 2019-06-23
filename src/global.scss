@@ -182,3 +182,16 @@ ion-toast {
     position: relative;
     top: -7vh;
 }
+
+.app-component {
+
+    ion-fab-button {
+        width: 40px;
+        height: 40px;
+
+        ion-icon {
+            position: relative;
+            top: 3px;
+        }
+    }
+}
