@@ -12,84 +12,108 @@
 @import 'theme/variables';
 
 .flex {
-  display: flex !important;
-  &.flex-row {
-    flex-direction: row !important;
-  }
-  &.flex-column {
-    flex-direction: column !important;
-  }
-  &.flex-wrap{
-    flex-wrap: wrap !important;
-  }
-  &.flex-wrap-no{
-    flex-wrap: nowrap !important;
-  }
-  &.flex-wrap-reverse{
-    flex-wrap: wrap-reverse !important;
-  }
-  &.flex-justify-start{
-    justify-content: start !important;
-  }
-  &.flex-justify-end{
-    justify-content: end !important;
-  }
-  &.flex-justify-center{
-    justify-content: center !important;
-  }
-  &.flex-justify-between{
-    justify-content: space-between !important;
-  }
-  &.flex-justify-between{
-    justify-content: space-around !important;
-  }
-  &.flex-justify-evenly{
-    justify-content: space-evenly !important;
-  }
-  &.flex-align-start{
-    align-items: flex-start !important;
-  }
-  &.flex-align-end{
-    align-items: flex-end !important;
-  }
-  &.flex-align-center{
-    align-items: center !important;
-  }
-  &.flex-align-stretch{
-    align-items: stretch !important;
-  }
-  &.flex-align-baseline{
-    align-items: baseline !important;
-  }
+    display: flex !important;
+
+    &.flex-row {
+        flex-direction: row !important;
+    }
+
+    &.flex-column {
+        flex-direction: column !important;
+    }
+
+    &.flex-wrap {
+        flex-wrap: wrap !important;
+    }
+
+    &.flex-wrap-no {
+        flex-wrap: nowrap !important;
+    }
+
+    &.flex-wrap-reverse {
+        flex-wrap: wrap-reverse !important;
+    }
+
+    &.flex-justify-start {
+        justify-content: start !important;
+    }
+
+    &.flex-justify-end {
+        justify-content: end !important;
+    }
+
+    &.flex-justify-center {
+        justify-content: center !important;
+    }
+
+    &.flex-justify-between {
+        justify-content: space-between !important;
+    }
+
+    &.flex-justify-between {
+        justify-content: space-around !important;
+    }
+
+    &.flex-justify-evenly {
+        justify-content: space-evenly !important;
+    }
+
+    &.flex-align-start {
+        align-items: flex-start !important;
+    }
+
+    &.flex-align-end {
+        align-items: flex-end !important;
+    }
+
+    &.flex-align-center {
+        align-items: center !important;
+    }
+
+    &.flex-align-stretch {
+        align-items: stretch !important;
+    }
+
+    &.flex-align-baseline {
+        align-items: baseline !important;
+    }
 
 
 }
 
-.full-height{
-  height: 100vh;
+.full-height {
+    height: 100vh;
 }
 
 @mixin w-x {
-  @for $i from 1 through 20 {
-    .w-#{$i*5} { width: #{$i*5}#{'%'} !important }
-  }
+    @for $i from 1 through 20 {
+        .w-#{$i*5} {
+            width: #{$i*5}#{'%'} !important
+        }
+    }
 }
 
 @mixin h-x {
     @for $i from 1 through 20 {
-        .h-#{$i*5} { height: #{$i*5}vh !important }
+        .h-#{$i*5} {
+            height: #{$i*5}vh !important
+        }
     }
 }
 
 @mixin mt-x {
     @for $i from 1 through 100 {
-        .mt-#{$i} { margin-top: #{$i}vh !important; }
+        .mt-#{$i} {
+            margin-top: #{$i}vh !important;
+        }
     }
 }
 
 @mixin mb-x {
     @for $i from 1 through 100 {
-        .mb-#{$i} { margin-bottom: #{$i}vh !important; }
+        .mb-#{$i} {
+            margin-bottom: #{$i}vh !important;
+        }
     }
 }
 
@@ -111,7 +135,7 @@
 @include h-x;
 
 
-.fingerprint{
+.fingerprint {
     height: 25vh;
     width: 25vw;
 }
@@ -152,4 +176,22 @@
 
 .black-text {
     color: black !important;
+}
+
+ion-toast {
+    position: relative;
+    top: -7vh;
+}
+
+.app-component {
+
+    ion-fab-button {
+        width: 40px;
+        height: 40px;
+
+        ion-icon {
+            position: relative;
+            top: 3px;
+        }
+    }
 }

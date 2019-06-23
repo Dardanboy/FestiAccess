@@ -17,8 +17,11 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlertControllerService} from '../providers/alertcontroller';
 import {AuthGuardService} from './guards/auth-guard-service.guard';
 import {DatePipe} from '@angular/common';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
+import {NetworkService} from '../providers/network';
+import { Network } from '@ionic-native/network/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import {SettingsService} from '../providers/settings';
+import {HttpRequestCacheContainer} from '../providers/httprequestcache';
 
 
 @NgModule({
@@ -28,7 +31,7 @@ import { environment } from '../environments/environment';
         FormsModule,
         ReactiveFormsModule
     ],
-    imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(), HttpClientModule, FormsModule, ReactiveFormsModule, ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })],
+    imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(), HttpClientModule, FormsModule, ReactiveFormsModule],
     providers: [
         StatusBar,
         SplashScreen,
@@ -40,6 +43,10 @@ import { environment } from '../environments/environment';
         AlertControllerService,
         AuthGuardService,
         DatePipe,
+        NetworkService,
+        Network,
+        AppVersion,
+        SettingsService,
     ],
     bootstrap: [AppComponent]
 })

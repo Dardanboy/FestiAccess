@@ -4,7 +4,6 @@ import {formatDate} from '@angular/common';
 import {FestiAccessPage} from '../extends/festi-access-page';
 import {ConnectedUser} from '../models/ConnectedUser';
 import {User} from '../models/User';
-import {DataProviderEnum} from "../../providers/data";
 
 @Component({
     selector: 'app-friends',
@@ -17,13 +16,14 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
 
     constructor(injector: Injector) {
         super(injector);
+        this.user = null;
         this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser)
             .then((data) => {
                 this.user = data;
                 this.classifyFriendsFromHereToNot();
             })
             .catch((error) => {
-                this.showMessage('Erreur: ' + error);
+                this.showMessage('[Friends:26] Erreur: ' + error);
             });
     }
 
@@ -41,6 +41,8 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
         const result = friends.sort((a, b) => {
             if (!a.ishere && b.ishere) {
                 return 1;
+            } else {
+                return -1;
             }
         });
     }
@@ -66,39 +68,57 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
     }
 
     private sendRequestToDeleteFriendship(friendId: number) {
-        this.apiService.API_PATH = '/api/dii/users/' + this.dataProvider.getFromMemoryCache(ConnectedUser).id + '/friends/' + friendId;
+        let actualUserId = -1;
+        this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser).then((user) => {
+            console.log('user');
+            console.log(user);
+            actualUserId = user.id;
 
-        this.dataProvider.httpDeleteRequest(this.apiService)
-            .then((data) => {
-                if (data.body.message === 'RESOURCE_DELETED') {
-                    this.showMessage('Le contact a bien été supprimé', 4000);
-                }
-            })
-            .catch((error: any) => {
-                this.showMessage('Erreur: ' + error.message + '\nVeuillez ressayer ou contacter l\'administrateur', 7500);
-            })
-            .finally(() => {
-                this.reloadUserWithFriends();
-            });
+            this.apiService.API_PATH = '/api/dii/users/' + actualUserId + '/friends/' + friendId;
+            this.dataProvider.httpDeleteRequest(this.apiService)
+                .then((data) => {
+                    if (data.body.message === 'RESOURCE_DELETED') {
+                        this.showMessage('Le contact a bien été supprimé', 4000);
+                    }
+                })
+                .catch((error: any) => {
+                    let message = null;
+                    if (error !== null && error.message !== null && error.message !== undefined) {
+                        message = error.message;
+                    } else {
+                        message = error;
+                    }
+                    this.showMessage('[Friends:85] Erreur: ' + error + '\nVeuillez ressayer ou contacter l\'administrateur', 2500);
+                })
+                .finally(() => {
+                    this.reloadUserWithFriends();
+                });
+        });
     }
 
     reloadUserWithFriends() {
-        this.apiService.API_PATH = '/api/dii/users/' + this.dataProvider.getFromMemoryCache(ConnectedUser).id;
-        this.startLoading();
+        this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser).then((user) => {
+            let actualUser = user.id;
+            this.apiService.API_PATH = '/api/dii/users/' + actualUser;
 
-        this.dataProvider.httpGetRequest(this.apiService, ConnectedUser)
-            .then((data) => {
-                console.log('ConnectedUser2: ');
-                console.log(ConnectedUser);
-                this.user = this.dataProvider.getFromMemoryCache(ConnectedUser);
-                this.classifyFriendsFromHereToNot();
-            })
-            .catch((error: any) => {
-                this.showMessage('Erreur: ' + error.message + '\nVeuillez ressayer ou contacter l\'administrateur', 7500);
-            })
-            .finally(() => {
-                this.stopLoading();
-            });
+            this.startLoading();
+
+            this.dataProvider.httpGetRequest(this.apiService, ConnectedUser)
+                .then((data) => {
+                    console.log('ConnectedUser2: ');
+                    console.log(ConnectedUser);
+                    this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser).then((connectedUser) => {
+                        this.user = connectedUser;
+                        this.classifyFriendsFromHereToNot();
+                    });
+                })
+                .catch((error: any) => {
+                    this.showMessage('[Friends:110] Erreur: ' + error.message + '\nVeuillez ressayer ou contacter l\'administrateur', 2500);
+                })
+                .finally(() => {
+                    this.stopLoading();
+                });
+        });
     }
 
     showContactInfo(id: number) {
@@ -108,6 +128,4 @@ export class FriendsPage extends FestiAccessPage implements OnInit {
     ngOnInit() {
 
     }
-
-
 }

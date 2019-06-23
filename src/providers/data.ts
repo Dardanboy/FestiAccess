@@ -1,10 +1,14 @@
 import {Storage} from '@ionic/storage';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import {Injectable, Injector} from '@angular/core';
 import {ApiService} from './api';
 import 'reflect-metadata';
 import {plainToClass} from 'class-transformer';
 import {ClassType} from 'class-transformer/ClassTransformer';
+import {NetworkService} from './network';
+import {HttpRequestCacheManager} from '../app/models/HttpRequestCacheManager';
+import {HttpRequestCacheContainer} from './httprequestcache';
+import {BehaviorSubject} from 'rxjs';
 
 export enum DataProviderEnum {
     GET = 'get',
@@ -20,10 +24,23 @@ export enum DataProviderStorageEnum {
 
 @Injectable()
 export class DataProvider {
-    private requestsResultCache: Map<string, any>;
+    private requestsResultCache: Map<string, any>; // Contains all memory cache
+    /**
+     * Used for offline mode
+     */
+    private httpCacheContainer: HttpRequestCacheContainer; // Contains all the cache about requests (for offline mode)
+    private _offlineMode: boolean; // Is a boolean simulating offline mode
+    private actualDataInformationsForOfflineMode: BehaviorSubject<object>;
 
-    constructor(private storage: Storage, private http: HttpClient) {
+
+    constructor(private storage: Storage, private http: HttpClient, private networkService: NetworkService) {
         this.requestsResultCache = new Map<string, any>();
+        /**
+         * Used for offline mode
+         */
+        this.httpCacheContainer = new HttpRequestCacheContainer(this);
+        this._offlineMode = false;
+        this.actualDataInformationsForOfflineMode = new BehaviorSubject<object>(null);
     }
 
     /**
@@ -42,7 +59,6 @@ export class DataProvider {
      * @param storeInStorage
      * @param storeIn
      */
-    // tslint:disable-next-line:no-shadowed-variable
     public httpDeleteRequest(apiService: ApiService, storeIn: ClassType<any> = null, storeInStorage: DataProviderStorageEnum = DataProviderStorageEnum.DONT_STORE_IN_STORAGE): Promise<any> {
         return this.httpRequestAndWaitResponse(apiService, DataProviderEnum.DELETE, null, storeIn, storeInStorage);
     }
@@ -54,7 +70,6 @@ export class DataProvider {
      * @param storeInStorage
      * @param storeIn
      */
-    // tslint:disable-next-line:no-shadowed-variable
     public httpPostRequest(apiService: ApiService, data: any, storeIn: ClassType<any> = null, storeInStorage: DataProviderStorageEnum = DataProviderStorageEnum.DONT_STORE_IN_STORAGE): Promise<any> {
         return this.httpRequestAndWaitResponse(apiService, DataProviderEnum.POST, data, storeIn, storeInStorage);
     }
@@ -63,55 +78,89 @@ export class DataProvider {
      * Send a request to the API and wait for the response.
      */
     private httpRequestAndWaitResponse(apiService: ApiService, method: DataProviderEnum, data: any, storeIn: ClassType<any>, storeInStorage: DataProviderStorageEnum): Promise<any> {
-
         let promise = null;
 
-        if (method === DataProviderEnum.POST || method === DataProviderEnum.PUT) {
-            if (typeof data === 'object') {
-                data = this.serializeObject(data);
-            }
-            // this.http[method] is the method called on http class. It can be this.http.post or this.http.put here
-            promise = this.http[method](
-                apiService.fullUrl(),
-                data,
-                {observe: 'response', headers: new HttpHeaders({'Content-Type': 'application/x-www-form-urlencoded'})}
-            ).toPromise();
+        if (this.networkService.isConnected && this.networkService.network.type !== 'none' && !this._offlineMode) {
 
-        } else { // Get and Delete requests
-            // this.http[method] is the method called on http class. It can be this.http.get or this.http.delete here
-            promise = this.http[method](apiService.fullUrl(), {observe: 'response'}).toPromise();
+            if (method === DataProviderEnum.POST || method === DataProviderEnum.PUT) {
+                if (typeof data === 'object') {
+                    data = this.serializeObject(data);
+                }
+                // this.http[method] is the method called on http class. It can be this.http.post or this.http.put here
+                promise = this.http[method](
+                    apiService.fullUrl(),
+                    data,
+                    {
+                        observe: 'response',
+                        headers: new HttpHeaders({'Content-Type': 'application/x-www-form-urlencoded'})
+                    }
+                ).toPromise();
+
+
+            } else { // Get and Delete requests
+                // this.http[method] is the method called on http class. It can be this.http.get or this.http.delete here
+                promise = this.http[method](apiService.fullUrl(), {observe: 'response'}).toPromise();
+            }
+        } else { // NO CONNECTION
+            console.log('IS NOT CONNECTED');
+
+            /**
+             * No connection, no chocolate.
+             * Here we just get what's put in the local cache (in httpRequestCacheService)
+             */
+            promise = new Promise((resolve, reject) => {
+                let httpData = this.getHttpResponseFromCache(apiService.fullUrl(), method);
+                console.log('httpData:');
+                console.log(httpData);
+                if (httpData !== null) {
+                    resolve(httpData.data);
+                    // Let's 'emit' the last information about data actually asked
+                    console.log('CALLED');
+                    this.actualDataInformationsForOfflineMode.next(httpData);
+                } else {
+                    reject('Vous êtes hors-ligne et il n\'est pas possible d\'effectuer cette action ' +
+                        '(aucune donnée hors-ligne pour cette requête n\'existe)');
+                }
+            });
         }
 
-        promise.then((response) => {
-            /**
-             * Store in memory cache
-             */
-            if (storeIn !== null) {
-                console.log('response:');
+        promise
+            .then((response) => {
+                console.log('THEN');
+                console.log('response: ' + response);
                 console.log(response);
-                console.log('getDataFromHttpResponse:');
-                console.log(this.getDataFromHttpResponse(response));
 
-                if (this.getDataFromHttpResponse(response) !== null &&
-                    this.getDataFromApiResponse(this.getDataFromHttpResponse(response)).length > 0) {
-                    this.storeDataInMemoryCache(this.getDataFromApiResponse(this.getDataFromHttpResponse(response)), storeIn);
-                } else {
-                    throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
-                }
-            }
+                if (storeIn !== null) {
+                    if (this.getDataFromHttpResponse(response) !== null &&
+                        this.getDataFromApiResponse(this.getDataFromHttpResponse(response)).length > 0) {
 
-            /**
-             *  Store in storage
-             */
-            if (storeInStorage === DataProviderStorageEnum.STORE_IN_STORAGE) {
-                if (this.getDataFromHttpResponse(response) !== null &&
-                    this.getDataFromApiResponse(this.getDataFromHttpResponse(response)).length > 0) {
-                    this.storeDataInStorage(this.getDataFromApiResponse(this.getDataFromHttpResponse(response)), storeIn);
-                } else {
-                    throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
+                        /**
+                         * Store in memory cache
+                         */
+                        this.storeDataInMemoryCache(this.getDataFromApiResponse(this.getDataFromHttpResponse(response)), storeIn);
+
+                        /**
+                         *  Store response in storage cache
+                         */
+                        this.storeDataInStorage(this.getDataFromApiResponse(this.getDataFromHttpResponse(response)), storeIn);
+
+                        /**
+                         *  Add all requests in HttpRequestCache (by using HttpRequestCacher)
+                         *  Store this HttpRequestCache into the storage cache
+                         */
+                        this.httpCacheContainer.addHttpCache(apiService.fullUrl(), method, response);
+                        console.log('object:');
+                        console.log(plainToClass(HttpRequestCacheManager, this.httpCacheContainer.getObject()));
+                        this.storeDataInStorage(this.httpCacheContainer.getObject(), HttpRequestCacheManager);
+                    } else {
+                        throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
+                    }
                 }
-            }
-        });
+            })
+            .catch((error) => {
+
+            });
+
 
         return promise;
     }
@@ -123,7 +172,7 @@ export class DataProvider {
      *                                           In this case only the object itself will be returned and not included in an array and thus the "[0]" of
      *                                           getFromMemoryCache()[0] won't be needed
      */
-    getFromMemoryCache(storedIn: ClassType<any>, forceAloneResultReturnWithoutArray: boolean = true): any {
+    private getFromMemoryCache(storedIn: ClassType<any>, forceAloneResultReturnWithoutArray: boolean = true): any {
         if (!this.requestsResultCache.has(storedIn.name)) {
             console.log('return null !');
             return null;
@@ -146,7 +195,7 @@ export class DataProvider {
      * @param storedIn
      * @param forceAloneResultReturnWithoutArray
      */
-    async getFromStorageCache(storedIn: ClassType<any>, forceAloneResultReturnWithoutArray: boolean = true): Promise<any> {
+    private async getFromStorageCache(storedIn: ClassType<any>, forceAloneResultReturnWithoutArray: boolean = true): Promise<any> {
         let res = await this.storage.get(storedIn.name);
         console.log('resultat getFromStorageCache:');
         console.log(res);
@@ -175,7 +224,7 @@ export class DataProvider {
         console.log(typeof result);
 
         if (result !== null) {
-            return Promise.resolve(plainToClass(storedIn, result));
+            return await Promise.resolve(plainToClass(storedIn, result));
         }
 
         result = await this.getFromStorageCache(storedIn);
@@ -183,28 +232,12 @@ export class DataProvider {
         console.log('data result getFromStorageCache: ' + result);
         if (result === null) {
             console.log('result === null getFromStorageCache');
-            return Promise.resolve(null);
+            return await Promise.resolve(null);
         }
         // Let's put result into memory cache
         // this.storeDataInMemoryCache(result, storedIn);
 
-        return Promise.resolve(plainToClass(storedIn, result));
-    }
-
-    private get(toGet) {
-        return this.storage.get(toGet);
-    }
-
-    private init() {
-        // this.user = (new User('Dardan', 'Iljazi', false, 'cmFuZG9tX2hhc2g=', new Role('invited'), []));
-    }
-
-    private store(key, data) {
-        return this.storage.set(key, data);
-    }
-
-    private clear() {
-        return this.storage.clear();
+        return await Promise.resolve(plainToClass(storedIn, result));
     }
 
     private serializeObject(object) {
@@ -216,14 +249,7 @@ export class DataProvider {
         return result.join('&');
     }
 
-    private storeDataInMemoryCache(data, storeIn: ClassType<any>) {
-        // // If we already have something for the storeIn key, let's transform storeIn has an array of results !
-        // if (this.requestsResultCache.get(storeIn.name) !== undefined) {
-        //     let copy = [];
-        //     copy.push(data);
-        //     copy.push(this.requestsResultCache.get(storeIn.name));
-        //     data = copy;
-        // }
+    storeDataInMemoryCache(data, storeIn: ClassType<any>) {
         const objectToArray = [];
         if (data instanceof Array) {
             data.forEach((object) => {
@@ -238,12 +264,16 @@ export class DataProvider {
         console.log('plainToClass:');
         console.log(plainToClass(storeIn, data));
         this.requestsResultCache.set(storeIn.name, plainToClass(storeIn, data));
-
     }
 
-    private storeDataInStorage(data, storeIn: ClassType<any>) {
+    private deleteInMemoryCache(toDelete: ClassType<any>) {
+        this.requestsResultCache.delete(toDelete.name);
+    }
+
+    storeDataInStorage(data, storeIn: ClassType<any>) {
         const objectToArray = [];
         if (data instanceof Array) {
+            console.log(storeIn.name + ' is an instance of array !');
             data.forEach((object) => {
                 objectToArray.push(plainToClass(storeIn, object));
             });
@@ -251,9 +281,19 @@ export class DataProvider {
         }
 
         this.storage.ready().then(() => {
-            this.storage.set(storeIn.name, data).then(() => {
-                console.log('data stored in storage for: ' + storeIn.name);
-            });
+            this.storage.set(storeIn.name, data)
+                .then(() => {
+                    console.log('data stored in storage for: ' + storeIn.name);
+                })
+                .catch((error) => {
+                    console.log('error in storeDataInStorage: ' + error);
+                });
+        });
+    }
+
+    private deleteDataInStorage(toDelete: ClassType<any>) {
+        this.storage.remove(toDelete.name).then(() => {
+            console.log('Deleted ' + toDelete.name);
         });
     }
 
@@ -263,5 +303,27 @@ export class DataProvider {
 
     private getDataFromApiResponse(apiResponse): Array<any> {
         return apiResponse.data;
+    }
+
+    private getHttpResponseFromCache(url: string, requestType: string) {
+        return this.httpCacheContainer.getHttpCache(url, requestType);
+    }
+
+    deleteFromMemoryAndStorageCache(toDelete: ClassType<any>) {
+        this.deleteDataInStorage(toDelete);
+        this.deleteInMemoryCache(toDelete);
+    }
+
+    /**
+     *
+     * Used for offline mode
+     */
+
+    set offlineMode(value: boolean) {
+        this._offlineMode = value;
+    }
+
+    getActualInfoBehaviour() {
+        return this.actualDataInformationsForOfflineMode;
     }
 }

@@ -1,3 +1,10 @@
 <ion-app>
+    <ng-container *ngIf="offlineMode !== undefined && offlineMode !== null">
+        <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="offlineMode" class="app-component" (click)="showAlertForOfflineMode()">
+            <ion-fab-button color="danger">
+                <ion-icon src="./assets/offline_white.svg"> </ion-icon>
+            </ion-fab-button>
+        </ion-fab>
+    </ng-container>
     <ion-router-outlet></ion-router-outlet>
 </ion-app>

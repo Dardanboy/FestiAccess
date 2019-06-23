@@ -21,7 +21,7 @@ export class MainPage extends FestiAccessPage implements OnInit {
                 console.log(this.user);
             })
             .catch((error) => {
-                this.showMessage('Erreur: ' + error);
+                this.showMessage('[Main] Erreur: ' + error);
             });
     }
 
