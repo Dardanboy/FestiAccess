@@ -71,7 +71,8 @@ export abstract class FestiAccessPage implements Navigation {
             console.log(data);
             if (data !== null) {
                 this.shownOfflineElementsData = data;
-
+                this.showMessage('Ces données proviennent de votre cache hors-ligne. Elles datent de '
+                    + this.shownOfflineElementsData.timestamp, 7500);
             }
         });
 

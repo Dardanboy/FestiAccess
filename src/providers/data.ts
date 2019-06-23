@@ -115,7 +115,7 @@ export class DataProvider {
                 if (httpData !== null) {
                     resolve(httpData.data);
                     // Let's 'emit' the last information about data actually asked
-                    this.actualDataInformationsForOfflineMode.next(httpData.data);
+                    this.actualDataInformationsForOfflineMode.next(httpData);
                 } else {
                     reject('Vous êtes hors-ligne et il n\'est pas possible d\'effectuer cette action ' +
                         '(aucune donnée hors-ligne pour cette requête n\'existe)');
@@ -151,17 +151,6 @@ export class DataProvider {
                         console.log('object:');
                         console.log(plainToClass(HttpRequestCacheManager, this.httpCacheContainer.getObject()));
                         this.storeDataInStorage(this.httpCacheContainer.getObject(), HttpRequestCacheManager);
-                        // let httpRequest = new HttpRequestCacheManager();
-
-                        // this.storage.ready().then(() => {
-                        //     this.storage.set('test', this.httpCacheContainer.getObject())
-                        //         .then(() => {
-                        //             console.log('data stored in storage for: ' + storeIn.name);
-                        //         })
-                        //         .catch((error) => {
-                        //             console.log('error in storeDataInStorage: ' + error);
-                        //         });
-                        // });
                     } else {
                         throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
                     }

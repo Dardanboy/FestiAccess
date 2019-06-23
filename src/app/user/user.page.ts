@@ -22,9 +22,9 @@ export class UserPage extends FestiAccessPage implements OnInit {
             .then((data) => {
                 this.user = null;
 
-                // this.dataProvider.getFromMemoryOrStorageCache(User).then((user) => {
-                //     this.user = user;
-                // });
+                this.dataProvider.getFromMemoryOrStorageCache(User).then((user) => {
+                    this.user = user;
+                });
             })
             .catch((error: any) => {
                 let message = null;

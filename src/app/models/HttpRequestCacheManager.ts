@@ -1,3 +1,7 @@
+import {HttpRequestCache} from './HttpRequestCache';
+import {Type} from 'class-transformer';
+
 export class HttpRequestCacheManager {
-    listOfHttpRequestCache: any[] = [];
+    @Type(() => HttpRequestCache)
+    listOfHttpRequestCache: HttpRequestCache[] = [];
 }
