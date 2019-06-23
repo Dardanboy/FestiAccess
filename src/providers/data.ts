@@ -115,6 +115,7 @@ export class DataProvider {
                 if (httpData !== null) {
                     resolve(httpData.data);
                     // Let's 'emit' the last information about data actually asked
+                    console.log('CALLED');
                     this.actualDataInformationsForOfflineMode.next(httpData);
                 } else {
                     reject('Vous êtes hors-ligne et il n\'est pas possible d\'effectuer cette action ' +
@@ -155,6 +156,9 @@ export class DataProvider {
                         throw Error('No data received from server, so impossible to store this data in the cache (' + storeIn.name + ')');
                     }
                 }
+            })
+            .catch((error) => {
+
             });
 
 

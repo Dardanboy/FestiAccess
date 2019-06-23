@@ -56,7 +56,7 @@ export class ConnectionPage extends FestiAccessPage implements OnInit, APIResour
                                 message = error;
                             }
                             this.showMessage('[Connection:49] Erreur: ' + message +
-                                '\nVeuillez ressayer ou contacter l\'administrateur', 7500);
+                                '\nVeuillez ressayer ou contacter l\'administrateur', 2500);
                         }
                     })
                     .finally(() => {

@@ -7,11 +7,14 @@ import {ToastService} from '../../providers/toast';
 import {AlertControllerService} from '../../providers/alertcontroller';
 import {ApiService} from '../../providers/api';
 import {NavController} from '@ionic/angular';
-import {DatePipe, Location} from '@angular/common';
+import {DatePipe, formatDate, Location} from '@angular/common';
 import {NetworkService} from '../../providers/network';
 import {SettingsService} from '../../providers/settings';
+import {HttpRequestCache} from "../models/HttpRequestCache";
+
 
 export abstract class FestiAccessPage implements Navigation {
+    static passedInIt = false;
     protected dataProvider: DataProvider;
     protected router: Router;
     protected loadingService: LoadingService;
@@ -23,12 +26,13 @@ export abstract class FestiAccessPage implements Navigation {
     protected location: Location;
     protected network: NetworkService;
     protected settings: SettingsService;
+
     /**
      * Used for offline mode
      */
     protected offlineMode: boolean;
     // Contains the last information asked in offline mode (returned by storage)
-    protected shownOfflineElementsData: object;
+    protected shownOfflineElementsData: HttpRequestCache;
 
     protected constructor(injector: Injector, API_PATH = null) {
         this.dataProvider = injector.get(DataProvider);
@@ -42,6 +46,7 @@ export abstract class FestiAccessPage implements Navigation {
         this.network = injector.get(NetworkService);
         this.settings = injector.get(SettingsService);
 
+
         this.apiService = new ApiService();
 
         if (API_PATH !== null) {
@@ -49,35 +54,38 @@ export abstract class FestiAccessPage implements Navigation {
         }
 
 
-        /**
-         * Get instantly changes to the settings by using BehaviourSubject/Observer
-         */
-        this.settings.getSettingBehaviour().subscribe((setting) => {
-            if (setting.apiLink !== null && setting.apiLink !== undefined) {
-                this.apiService.API_URL = setting.apiLink;
-            }
+        if (!FestiAccessPage.passedInIt) {
+            console.log('Passed');
+            FestiAccessPage.passedInIt = true;
+            /**
+             * Get instantly changes to the settings by using BehaviourSubject/Observer
+             */
+            this.settings.getSettingBehaviour().subscribe((setting) => {
+                if (setting.apiLink !== null && setting.apiLink !== undefined) {
+                    this.apiService.API_URL = setting.apiLink;
+                }
 
-            if (setting.offlineMode !== null && setting.offlineMode !== undefined) {
-                this.dataProvider.offlineMode = setting.offlineMode;
-                this.offlineMode = setting.offlineMode;
-            }
-        });
+                if (setting.offlineMode !== null && setting.offlineMode !== undefined) {
+                    this.dataProvider.offlineMode = setting.offlineMode;
+                    this.offlineMode = setting.offlineMode;
+                }
+            });
 
-        /**
-         * Get instantly changes on offline mode that are given by DataProvider
-         */
-        this.dataProvider.getActualInfoBehaviour().subscribe((data) => {
-            console.log('shownOfflineElements:');
-            console.log(data);
-            if (data !== null) {
-                this.shownOfflineElementsData = data;
-                this.showMessage('Ces données proviennent de votre cache hors-ligne. Elles datent de '
-                    + this.shownOfflineElementsData.timestamp, 7500);
-            }
-        });
-
+            /**
+             * Get instantly changes on offline mode that are given by DataProvider
+             */
+            this.dataProvider.getActualInfoBehaviour().subscribe((data) => {
+                if (data !== null) {
+                    console.log('shownOfflineElements:');
+                    console.log(data);
+                    this.shownOfflineElementsData = data as HttpRequestCache;
+                    // @ts-ignore
+                    this.showMessage('Ces données proviennent de votre cache hors-ligne. Elles datent du '
+                        + formatDate(this.shownOfflineElementsData.timestamp, 'short', 'en-US'), 3500);
+                }
+            });
+        }
     }
-
 
     goTo(link, params: number = null): void {
         this.router.navigate(['/' + link + ((params !== null && params !== undefined) ? '/' + params.toString() : '')])
@@ -136,7 +144,7 @@ export abstract class FestiAccessPage implements Navigation {
     showAlertForOfflineMode() {
         this.showAlert('Mode hors-ligne',
             'Vous êtes actuellement hors-ligne. ' +
-            'Les données que vous voyez ne sont pas synchronisées et proviennent des dernières données récupérées en ligne.',
+            'Les données que vous voyez ne sont pas synchronisées et proviennent des dernières données récupérées en ligne. Certaines données risquent de n\'avoir jamais été récupérées et sont donc indisponibles.',
             [{
                 text: 'J\'ai compris',
                 action: () => {
