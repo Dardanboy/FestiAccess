@@ -111,6 +111,17 @@ export abstract class FestiAccessPage implements Navigation {
 
         this.alertController.presentAlert(title, message, buttonsObject).then();
     }
+
+    showAlertForOfflineMode() {
+        this.showAlert('Mode hors-ligne',
+            'Vous êtes actuellement hors-ligne. Les données que vous voyez ne sont pas synchronisées et proviennent des dernières données récupérées en ligne.',
+            [{
+                text: 'J\'ai compris',
+                action: () => {
+
+                }
+            }]);
+    }
 }
 
 
