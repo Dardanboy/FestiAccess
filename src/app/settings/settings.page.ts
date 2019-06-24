@@ -119,21 +119,21 @@ export class SettingsPage extends FestiAccessPage implements OnInit {
         this.dataProvider.storeDataInStorage([newHttpData.data.body], User);
 
 
-        /**
-         * Simulate festivals list here
-         * TODO: It's a bit tricky here. We don't have actually a request that goes to /api/dii/festivals. So we copy any requests (for example Robert de Niro), change the link to this and change the value
-         */
-        // Get old response form http cache
-        let httpData2 = this.dataProvider.getHttpResponseFromCache(apiService.fullUrl(), 'get');
-        let newHttpData2 = httpData2;
-        // Modify body of newHttpData with what we want (simulation)
-        newHttpData2.data.body = simulateOfflineData.getFestivalsListResponse(); // Change the response of old to the new api
-        apiService.API_PATH = '/api/dii/festivals'; // We use it so we can copy the values of what was returned by this user and modify it manually
-        newHttpData2.link = apiService.fullUrl();
-        console.log(newHttpData2.link);
-        // Read the new response to the cache and save it
-        this.dataProvider.httpCacheContainer.addHttpCache(apiService.fullUrl(), 'get', newHttpData2.data);
-        this.dataProvider.storeDataInStorage(this.dataProvider.httpCacheContainer.getObject(), HttpRequestCacheManager); // Restore the new data in cache
+        // /**
+        //  * Simulate festivals list here
+        //  * TODO: It's a bit tricky here. We don't have actually a request that goes to /api/dii/festivals. So we copy any requests (for example Robert de Niro), change the link to this and change the value
+        //  */
+        // // Get old response form http cache
+        // let httpData2 = this.dataProvider.getHttpResponseFromCache(apiService.fullUrl(), 'get');
+        // let newHttpData2 = httpData2;
+        // // Modify body of newHttpData with what we want (simulation)
+        // newHttpData2.data.body = simulateOfflineData.getFestivalsListResponse(); // Change the response of old to the new api
+        // apiService.API_PATH = '/api/dii/festivals'; // We use it so we can copy the values of what was returned by this user and modify it manually
+        // newHttpData2.link = apiService.fullUrl();
+        // console.log(newHttpData2.link);
+        // // Read the new response to the cache and save it
+        // this.dataProvider.httpCacheContainer.addHttpCache(apiService.fullUrl(), 'get', newHttpData2.data);
+        // this.dataProvider.storeDataInStorage(this.dataProvider.httpCacheContainer.getObject(), HttpRequestCacheManager); // Restore the new data in cache
     }
 
     ngOnInit() {
