@@ -21,6 +21,7 @@ export class SimulateNewApiOffline {
                     surname: 'Iljazi',
                     fingerPrintHash: 'cmFuZG9tX2hhc2g=',
                     role: 'user',
+                    subscribed_since: '2019-06-24T07:11:17.000000Z',
                     festival_access: [
                         {
                             id: 1,
@@ -34,7 +35,6 @@ export class SimulateNewApiOffline {
                             ishere: true
                         }
                     ],
-                    subscribed_since: '2019-06-24T07:11:17.000000Z',
                     friends: [
                         {
                             id: 3,
