@@ -27,6 +27,12 @@
                     </ion-item>
 
                     <ion-item class="mt-2" *ngIf="isConnected">
+                        <ion-button size="full" color="primary" (click)="seedNewApi()">
+                            Seed nouvel API
+                        </ion-button>
+                    </ion-item>
+
+                    <ion-item class="mt-2" *ngIf="isConnected">
                         <a class="w-100" (click)="disconnect()" style="vertical-align: middle;">
                             <ion-icon ios="ios-exit" md="md-exit" style="vertical-align: middle"></ion-icon>
                             Déconnexion</a>

@@ -1,6 +1,7 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {FestiAccessPage} from '../extends/festi-access-page';
 import {ConnectedUser} from '../models/ConnectedUser';
+import {SimulateNewApiOffline} from '../../providers/simulateNewApiOffline';
 
 @Component({
     selector: 'app-home',
@@ -9,6 +10,7 @@ import {ConnectedUser} from '../models/ConnectedUser';
 })
 
 export class HomePage extends FestiAccessPage implements OnInit {
+
     constructor(injector: Injector) {
         super(injector);
         console.log('entered home');

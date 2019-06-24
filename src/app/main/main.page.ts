@@ -1,7 +1,7 @@
 import {AfterContentInit, Component, Injector, OnInit} from '@angular/core';
 import {FestiAccessPage} from '../extends/festi-access-page';
 import {User} from '../models/User';
-import {ConnectedUser} from "../models/ConnectedUser";
+import {ConnectedUser} from '../models/ConnectedUser';
 
 @Component({
     selector: 'app-main',
@@ -10,9 +10,11 @@ import {ConnectedUser} from "../models/ConnectedUser";
 })
 export class MainPage extends FestiAccessPage implements OnInit {
     user: User;
+    private isclicked: boolean;
 
     constructor(injector: Injector) {
         super(injector);
+        this.isclicked = false;
         this.dataProvider.getFromMemoryOrStorageCache(ConnectedUser)
             .then((data) => {
                 console.log('main data:');
@@ -23,6 +25,10 @@ export class MainPage extends FestiAccessPage implements OnInit {
             .catch((error) => {
                 this.showMessage('[Main] Erreur: ' + error);
             });
+    }
+
+    isCLicked() {
+        this.isclicked = true;
     }
 
     ngOnInit(): void {

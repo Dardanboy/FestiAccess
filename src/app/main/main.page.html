@@ -15,27 +15,52 @@
             </div>
         </div>
         <div *ngIf="user.role === 'user'" class="flex flex-align-center flex-column flex-justify-center mt-5">
-            <h1 class="mb-4">Programme de la soirée</h1>
-            <ion-card class="sc-ion-card-ios-h sc-ion-card-ios-s ios hydrated">
-                <img src="../assets/programme/damso.jpg" />
-                <ion-card-header class="ios hydrated">
-                    <ion-card-subtitle class="ios hydrated" role="heading" aria-level="3">Damso</ion-card-subtitle>
-                    <ion-card-title class="ios hydrated" role="heading" aria-level="2">20:00</ion-card-title>
-                </ion-card-header>
-                <ion-card-content class="ios card-content-ios hydrated">
-                    Et si la plus belle plume du rap dit français était belge? Damso est en tout cas l’un des artistes les plus populaires du moment, alignant les disques de platine et de diamant. Découvert sur un album de Booba, son flow posé et sa plume crue et incisive lui ont permis de tailler sa route pour devenir le nouveau poids lourd du rap francophone. Hashtag explicit, ses textes ne s’encombrent pas de précautions et Damso est fier d’être un franc-tireur. Insolent, mais brillant, le «Dems» pour les intimes ose parler de tout. Feu de bois, Smog, O Macarena, contre vents et marées, la vague Damso va déferler sur la plaine de l’Asse.
-                </ion-card-content>
-            </ion-card>
-            <ion-card class="sc-ion-card-ios-h sc-ion-card-ios-s ios hydrated">
-                <img src="../assets/programme/soprano.jpg" />
-                <ion-card-header class="ios hydrated">
-                    <ion-card-subtitle class="ios hydrated" role="heading" aria-level="3">Soprano</ion-card-subtitle>
-                    <ion-card-title class="ios hydrated" role="heading" aria-level="2">22:00</ion-card-title>
-                </ion-card-header>
-                <ion-card-content class="ios card-content-ios hydrated">
-                    Mais jusqu’où ira Soprano? Il côtoyait déjà les cimes du monde avec son album L’Everest. Et il n’est pas près de redescendre. Le Marseillais persiste et signe avec son dernier opus Phoenix et sa tournée du même nom, au succès sans précédent. Tube après tube, il fédère petits ou grands et fidélise un public toujours plus colossal. Le voilà désormais dans la stratosphère. Initialement repéré en 2002 avec Psy4 de la Rime, il casse désormais ouvertement les clichés du rap, flirtant de manière assumée et totalement décomplexée avec la chanson, la pop ou la variété. Un univers à son image: énergique, cosmopolite et lumineux.
-                </ion-card-content>
-            </ion-card>
+
+            <ng-container *ngIf="!isclicked">
+                <ion-button (click)="isCLicked()">
+                    Montreux
+                </ion-button>
+                <ion-button (click)="isCLicked()">
+                    Paléo
+                </ion-button>
+            </ng-container>
+            <ng-container *ngIf="isclicked">
+                <h1 class="mb-4">Programme de la soirée</h1>
+                <ion-card class="sc-ion-card-ios-h sc-ion-card-ios-s ios hydrated">
+                    <img src="../assets/programme/damso.jpg"/>
+                    <ion-card-header class="ios hydrated">
+                        <ion-card-subtitle class="ios hydrated" role="heading" aria-level="3">Damso</ion-card-subtitle>
+                        <ion-card-title class="ios hydrated" role="heading" aria-level="2">20:00</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content class="ios card-content-ios hydrated">
+                        Et si la plus belle plume du rap dit français était belge? Damso est en tout cas l’un des
+                        artistes les plus populaires du moment, alignant les disques de platine et de diamant. Découvert
+                        sur un album de Booba, son flow posé et sa plume crue et incisive lui ont permis de tailler sa
+                        route pour devenir le nouveau poids lourd du rap francophone. Hashtag explicit, ses textes ne
+                        s’encombrent pas de précautions et Damso est fier d’être un franc-tireur. Insolent, mais
+                        brillant, le «Dems» pour les intimes ose parler de tout. Feu de bois, Smog, O Macarena, contre
+                        vents et marées, la vague Damso va déferler sur la plaine de l’Asse.
+                    </ion-card-content>
+                </ion-card>
+                <ion-card class="sc-ion-card-ios-h sc-ion-card-ios-s ios hydrated">
+                    <img src="../assets/programme/soprano.jpg"/>
+                    <ion-card-header class="ios hydrated">
+                        <ion-card-subtitle class="ios hydrated" role="heading" aria-level="3">Soprano
+                        </ion-card-subtitle>
+                        <ion-card-title class="ios hydrated" role="heading" aria-level="2">22:00</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content class="ios card-content-ios hydrated">
+                        Mais jusqu’où ira Soprano? Il côtoyait déjà les cimes du monde avec son album L’Everest. Et il
+                        n’est pas près de redescendre. Le Marseillais persiste et signe avec son dernier opus Phoenix et
+                        sa tournée du même nom, au succès sans précédent. Tube après tube, il fédère petits ou grands et
+                        fidélise un public toujours plus colossal. Le voilà désormais dans la stratosphère. Initialement
+                        repéré en 2002 avec Psy4 de la Rime, il casse désormais ouvertement les clichés du rap, flirtant
+                        de manière assumée et totalement décomplexée avec la chanson, la pop ou la variété. Un univers à
+                        son image: énergique, cosmopolite et lumineux.
+                    </ion-card-content>
+                </ion-card>
+            </ng-container>
+
         </div>
     </div>
 

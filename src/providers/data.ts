@@ -9,6 +9,8 @@ import {NetworkService} from './network';
 import {HttpRequestCacheManager} from '../app/models/HttpRequestCacheManager';
 import {HttpRequestCacheContainer} from './httprequestcache';
 import {BehaviorSubject} from 'rxjs';
+import {SimulateNewApiOffline} from './simulateNewApiOffline';
+import {ConnectionPage} from '../app/connection/connection.page';
 
 export enum DataProviderEnum {
     GET = 'get',
@@ -28,12 +30,12 @@ export class DataProvider {
     /**
      * Used for offline mode
      */
-    private httpCacheContainer: HttpRequestCacheContainer; // Contains all the cache about requests (for offline mode)
+    httpCacheContainer: HttpRequestCacheContainer; // Contains all the cache about requests (for offline mode)
     private _offlineMode: boolean; // Is a boolean simulating offline mode
     private actualDataInformationsForOfflineMode: BehaviorSubject<object>;
 
 
-    constructor(private storage: Storage, private http: HttpClient, private networkService: NetworkService) {
+    constructor(private storage: Storage, private http: HttpClient, private networkService: NetworkService, private simulateNewApiOffline: SimulateNewApiOffline) {
         this.requestsResultCache = new Map<string, any>();
         /**
          * Used for offline mode
@@ -41,6 +43,23 @@ export class DataProvider {
         this.httpCacheContainer = new HttpRequestCacheContainer(this);
         this._offlineMode = false;
         this.actualDataInformationsForOfflineMode = new BehaviorSubject<object>(null);
+
+        /**
+         * New api: Must simulate data and add them into the local cache.
+         * TODO: WARNING TO MAKE IT WORK SIMPLY LAUNCH
+         */
+        /*Simulate api returned after connection */
+        let apiService = new ApiService();
+        apiService.API_URL = 'http://localhost:8000/';
+        apiService.API_PATH = '/api/dii/connection';
+        // Let's simulate connecton with fingerPrintHash of Dardan Iljazi
+        let promise = this.http.post(apiService.fullUrl(), {fingerPrintHash: 'cmFuZG9tX2hhc2g='}, {
+            observe: 'response',
+            headers: new HttpHeaders({'Content-Type': 'application/x-www-form-urlencoded'})
+        }).toPromise();
+
+        // this.httpCacheContainer.addHttpCache(apiService.fullUrl(), 'post',);
+
     }
 
     /**
@@ -305,7 +324,7 @@ export class DataProvider {
         return apiResponse.data;
     }
 
-    private getHttpResponseFromCache(url: string, requestType: string) {
+    getHttpResponseFromCache(url: string, requestType: string) {
         return this.httpCacheContainer.getHttpCache(url, requestType);
     }
 

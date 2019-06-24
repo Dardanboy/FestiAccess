@@ -22,6 +22,7 @@ import { Network } from '@ionic-native/network/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {SettingsService} from '../providers/settings';
 import {HttpRequestCacheContainer} from '../providers/httprequestcache';
+import {SimulateNewApiOffline} from '../providers/simulateNewApiOffline';
 
 
 @NgModule({
@@ -47,6 +48,7 @@ import {HttpRequestCacheContainer} from '../providers/httprequestcache';
         Network,
         AppVersion,
         SettingsService,
+        SimulateNewApiOffline
     ],
     bootstrap: [AppComponent]
 })

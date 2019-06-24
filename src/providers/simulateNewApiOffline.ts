@@ -4,15 +4,15 @@ import {DataProvider} from './data';
 
 @Injectable()
 /**
- * Returns all data that should
+ * Returns all data that should be in the new api formatted. Those data should be in cache
  */
 export class SimulateNewApiOffline {
 
-    constructor(private dataProvider: DataProvider) {
+    constructor() {
 
     }
 
-    getUserList() {
+    getConnectionResponse() {
         return {
             data: [
                 {
@@ -62,12 +62,11 @@ export class SimulateNewApiOffline {
         };
     }
 
-    getFestivalsList() {
+    getFestivalsListResponse() {
         return {
             data: [
                 {
-
-                    festival_access: [
+                    festivals: [
                         {
                             id: 1,
                             name: 'Montreux',
@@ -81,6 +80,30 @@ export class SimulateNewApiOffline {
                             date_end: '2019-06-23T07:11:17.000000Z',
                         },
                     ]
+                }
+            ]
+        };
+    }
+
+
+    getRobertDeNiroUserResponse() {
+        return {
+            id: 3,
+            name: 'Robert',
+            surname: 'De Niro',
+            fingerPrintHash: 'cm9iZXJ0ZGVuaXJv',
+            role: 'user',
+            subscribed_since: '2019-06-24T07:11:17.000000Z',
+            festival_access: [
+                {
+                    name: 'Paléo',
+                    ishere_changed_at: '2019-06-24T07:11:17.000000Z',
+                    ishere: true
+                },
+                {
+                    name: 'Montreux jazz',
+                    ishere_changed_at: '2019-06-24T09:00:00.000000Z',
+                    ishere: false
                 }
             ]
         };

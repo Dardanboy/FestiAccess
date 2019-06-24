@@ -24,6 +24,8 @@ export class UserPage extends FestiAccessPage implements OnInit {
 
                 this.dataProvider.getFromMemoryOrStorageCache(User).then((user) => {
                     this.user = user;
+                    console.log('user:');
+                    console.log(user);
                 });
             })
             .catch((error: any) => {

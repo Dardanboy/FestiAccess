@@ -20,23 +20,28 @@
                     {{ user.name + ' ' + user.surname }}
                 </h2>
                 <h3>
-                    <span class="circle-user" [ngClass]="{'bg-success': user.ishere, 'bg-medium': !user.ishere }"></span>
-                    {{ (user.ishere) ? 'Présent au festival' : 'Non présent au festival' }}
+                    <span class="circle-user"
+                          [ngClass]="{'bg-success': user.ishere, 'bg-medium': !user.ishere }"></span>
+                    <ng-container *ngFor="let festivalAccess of user.festival_access">
+                        <ng-container *ngIf="festivalAccess.ishere">
+                            {{ 'Présent au festival de: ' + festivalAccess.name }}
+                        </ng-container>
+                    </ng-container>
+
                 </h3>
-                <p>
-                    <ng-container *ngIf="user.ishere_changed_at">
-                        {{ user.ishere ? 'Entré au' : 'Sorti du' }} festival
-                        à {{ this.datePipe.transform(user.ishere_changed_at, 'h:mm') }}
-                    </ng-container>
-                    <ng-container *ngIf="!user.ishere_changed_at">
-                        Pas encore entré au festival
-                    </ng-container>
-                </p>
                 <p>
                     Inscrit depuis le {{ this.datePipe.transform(user.subscribed_since, 'dd.MM.yyyy') }}
                 </p>
+                <h4>
+                    Festivals où il est passé:
+                </h4>
+                <ion-list>
+                    <ion-item *ngFor="let festivalAccess of user.festival_access">
+                        <strong>{{ festivalAccess.name }}&nbsp; </strong>
+                        <p>le:  {{ this.datePipe.transform(festivalAccess.ishere_changed_at, 'medium')}}</p>
+                    </ion-item>
+                </ion-list>
             </ng-container>
-
         </ion-row>
     </ion-grid>
 </ion-content>
